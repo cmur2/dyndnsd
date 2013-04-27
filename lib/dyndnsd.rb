@@ -89,6 +89,8 @@ module Dyndnsd
       
       myip = params["myip"]
       
+      Dyndnsd.logger.info "Request to update #{hostnames} to #{myip} for user #{user}"
+      
       changes = []
       hostnames.each do |hostname|
         if (not @db['hosts'].include? hostname) or (@db['hosts'][hostname] != myip)
@@ -101,6 +103,7 @@ module Dyndnsd
       
       if @db.changed?
         @db['serial'] += 1
+        Dyndnsd.logger.info "Committing update ##{@db['serial']}"
         @db.save
         update
       end
@@ -109,9 +112,6 @@ module Dyndnsd
     end
 
     def self.run!
-      Dyndnsd.logger = Logger.new(STDOUT)
-      Dyndnsd.logger.formatter = LogFormatter.new
-
       if ARGV.length != 1
         puts "Usage: dyndnsd config_file"
         exit 1
@@ -120,14 +120,25 @@ module Dyndnsd
       config_file = ARGV[0]
 
       if not File.file?(config_file)
-        Dyndnsd.logger.fatal "Config file not found!"
+        puts "Config file not found!"
         exit 1
       end
-
-      Dyndnsd.logger.info "DynDNSd version #{Dyndnsd::VERSION}"
-      Dyndnsd.logger.info "Using config file #{config_file}"
+      
+      puts "DynDNSd version #{Dyndnsd::VERSION}"
+      puts "Using config file #{config_file}"
 
       config = YAML::load(File.open(config_file, 'r') { |f| f.read })
+      
+      if config['logfile']
+        Dyndnsd.logger = Logger.new(config['logfile'])
+      else
+        Dyndnsd.logger = Logger.new(STDOUT)
+      end
+      
+      Dyndnsd.logger.progname = "dyndnsd"
+      Dyndnsd.logger.formatter = LogFormatter.new
+
+      Dyndnsd.logger.info "Starting..."
 
       db = Database.new(config['db'])
       updater = Updater::CommandWithBindZone.new(config['domain'], config['updater']['params']) if config['updater']['name'] == 'command_with_bind_zone'
@@ -135,10 +146,13 @@ module Dyndnsd
       
       app = Daemon.new(config, db, updater, responder)
       app = Rack::Auth::Basic.new(app, "DynDNS") do |user,pass|
-        (config['users'].has_key? user) and (config['users'][user]['password'] == pass)
+        allow = (config['users'].has_key? user) and (config['users'][user]['password'] == pass)
+        Dyndnsd.logger.warn "Login failed for #{user}" if not allow
+        allow
       end
 
       Signal.trap('INT') do
+        Dyndnsd.logger.info "Quitting..."
         Rack::Handler::WEBrick.shutdown
       end
 
