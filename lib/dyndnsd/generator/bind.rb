@@ -7,6 +7,7 @@ module Dyndnsd
         @ttl = config['ttl']
         @dns = config['dns']
         @email_addr = config['email_addr']
+        @additional_zone_content = config['additional_zone_content']
       end
 
       def generate(zone)
@@ -21,6 +22,8 @@ module Dyndnsd
           name = hostname.chomp('.' + @domain)
           out << "#{name} IN A #{ip}"
         end
+        out << ""
+        out << @additional_zone_content
         out << ""
         out.join("\n")
       end
