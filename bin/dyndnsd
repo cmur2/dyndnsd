@@ -1,0 +1,4 @@
+
+require 'dyndnsd'
+
+Dyndnsd::Daemon.run!
