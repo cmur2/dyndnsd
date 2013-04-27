@@ -81,10 +81,10 @@ module Dyndnsd
         @db['serial'] += 1
         @db.save
         update
-        return @responder.response_for(:good)
+        return @responder.response_for(:good, myip)
       end
       
-      @responder.response_for(:nochg)
+      @responder.response_for(:nochg, myip)
     end
 
     def self.run!
