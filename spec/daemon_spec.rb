@@ -129,4 +129,11 @@ describe Dyndnsd::Daemon do
     last_response.should be_ok
     last_response.body.should == "nochg 1.2.3.4\ngood 1.2.3.4"
   end
+  
+  it 'uses clients remote address if myip not specified' do
+    authorize 'test', 'secret'
+    get '/nic/update?hostname=foo.example.org'
+    last_response.should be_ok
+    last_response.body.should == 'good 127.0.0.1'
+  end
 end
