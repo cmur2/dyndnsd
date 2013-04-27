@@ -24,7 +24,7 @@ module Dyndnsd
 
   class LogFormatter
     def call(lvl, time, progname, msg)
-      "%s: %s\n" % [lvl, msg.to_s]
+      "[%s] %-5s %s\n" % [Time.now.strftime('%Y-%m-%d %H:%M:%S'), lvl, msg.to_s]
     end
   end
 
