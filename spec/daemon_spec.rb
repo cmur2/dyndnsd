@@ -49,10 +49,49 @@ describe Dyndnsd::Daemon do
     last_response.should be_ok
     last_response.body.should == 'notfqdn'
   end
+
+  it 'supports multiple hostnames in request' do
+    authorize 'test', 'secret'
+    get '/nic/update?hostname=foo.example.org,bar.example.org&myip=1.2.3.4'
+    last_response.should be_ok
+    last_response.body.should == "good 1.2.3.4\ngood 1.2.3.4"
+  end
+
+  it 'rejects request if one hostname is invalid' do
+    authorize 'test', 'secret'
+    
+    get '/nic/update?hostname=test'
+    last_response.should be_ok
+    last_response.body.should == 'notfqdn'
+    
+    get '/nic/update?hostname=test.example.com'
+    last_response.should be_ok
+    last_response.body.should == 'notfqdn'
+    
+    get '/nic/update?hostname=test.example.org.me'
+    last_response.should be_ok
+    last_response.body.should == 'notfqdn'
+    
+    get '/nic/update?hostname=foo.test.example.org'
+    last_response.should be_ok
+    last_response.body.should == 'notfqdn'
+    
+    get '/nic/update?hostname=in%20valid.example.org'
+    last_response.should be_ok
+    last_response.body.should == 'notfqdn'
+    
+    get '/nic/update?hostname=valid.example.org,in.valid.example.org'
+    last_response.should be_ok
+    last_response.body.should == 'notfqdn'
+  end
   
-  it 'forbids changing hosts a user does not own' do
+  it 'rejects request if user does not own one hostname' do
     authorize 'test', 'secret'
     get '/nic/update?hostname=notmyhost.example.org'
+    last_response.should be_ok
+    last_response.body.should == 'nohost'
+    
+    get '/nic/update?hostname=foo.example.org,notmyhost.example.org'
     last_response.should be_ok
     last_response.body.should == 'nohost'
   end
@@ -79,45 +118,15 @@ describe Dyndnsd::Daemon do
     last_response.body.should == 'nochg 1.2.3.4'
   end
   
-  it 'forbids invalid hostnames' do
-    authorize 'test', 'secret'
-    
-    get '/nic/update?hostname=test'
-    last_response.should be_ok
-    last_response.body.should == 'notfqdn'
-    
-    get '/nic/update?hostname=test.example.com'
-    last_response.should be_ok
-    last_response.body.should == 'notfqdn'
-    
-    get '/nic/update?hostname=test.example.org.me'
-    last_response.should be_ok
-    last_response.body.should == 'notfqdn'
-    
-    get '/nic/update?hostname=foo.test.example.org'
-    last_response.should be_ok
-    last_response.body.should == 'notfqdn'
-    
-    get '/nic/update?hostname=in%20valid.example.org.me'
-    last_response.should be_ok
-    last_response.body.should == 'notfqdn'
-  end
-  
-  it 'outputs status for hostname' do
+  it 'outputs status per hostname' do
     authorize 'test', 'secret'
 
     get '/nic/update?hostname=foo.example.org&myip=1.2.3.4'
     last_response.should be_ok
     last_response.body.should == 'good 1.2.3.4'
-  end
-  
-  it 'supports multiple hostnames in request' do
-    authorize 'test', 'secret'
-    
-    pending
     
     get '/nic/update?hostname=foo.example.org,bar.example.org&myip=1.2.3.4'
     last_response.should be_ok
-    last_response.body.should == "good 1.2.3.4\ngood 1.2.3.4"
+    last_response.body.should == "nochg 1.2.3.4\ngood 1.2.3.4"
   end
 end

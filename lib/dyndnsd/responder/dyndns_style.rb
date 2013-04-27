@@ -2,7 +2,7 @@
 module Dyndnsd
   module Responder
     class DynDNSStyle
-      def response_for(state, ip = nil)
+      def response_for_error(state)
         # general http errors
         return [405, {"Content-Type" => "text/plain"}, ["Method Not Allowed"]] if state == :method_forbidden
         return [404, {"Content-Type" => "text/plain"}, ["Not Found"]] if state == :not_found
@@ -10,9 +10,11 @@ module Dyndnsd
         return [200, {"Content-Type" => "text/plain"}, ["notfqdn"]] if state == :hostname_missing
         return [200, {"Content-Type" => "text/plain"}, ["nohost"]] if state == :host_forbidden
         return [200, {"Content-Type" => "text/plain"}, ["notfqdn"]] if state == :hostname_malformed
-        # OKs
-        return [200, {"Content-Type" => "text/plain"}, ["good #{ip}"]] if state == :good
-        return [200, {"Content-Type" => "text/plain"}, ["nochg #{ip}"]] if state == :nochg
+      end
+      
+      def response_for_changes(states, ip)
+        body = states.map { |state| "#{state} #{ip}" }.join("\n")
+        return [200, {"Content-Type" => "text/plain"}, [body]]
       end
     end
   end

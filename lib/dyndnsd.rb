@@ -55,21 +55,25 @@ module Dyndnsd
     end
     
     def call(env)
-      return @responder.response_for(:method_forbidden) if env["REQUEST_METHOD"] != "GET"
-      return @responder.response_for(:not_found) if env["PATH_INFO"] != "/nic/update"
+      return @responder.response_for_error(:method_forbidden) if env["REQUEST_METHOD"] != "GET"
+      return @responder.response_for_error(:not_found) if env["PATH_INFO"] != "/nic/update"
       
       params = Rack::Utils.parse_query(env["QUERY_STRING"])
       
-      return @responder.response_for(:hostname_missing) if not params["hostname"]
+      return @responder.response_for_error(:hostname_missing) if not params["hostname"]
       
-      hostname = params["hostname"]
+      hostnames = params["hostname"].split(',')
       
       # Check if hostname match rules
-      return @responder.response_for(:hostname_malformed) if not is_fqdn_valid?(hostname)
+      hostnames.each do |hostname|
+        return @responder.response_for_error(:hostname_malformed) if not is_fqdn_valid?(hostname)
+      end
       
       user = env["REMOTE_USER"]
       
-      return @responder.response_for(:host_forbidden) if not @users[user]['hosts'].include? hostname
+      hostnames.each do |hostname|
+        return @responder.response_for_error(:host_forbidden) if not @users[user]['hosts'].include? hostname
+      end
       
       # no myip?
       if not params["myip"]
@@ -85,16 +89,23 @@ module Dyndnsd
       
       myip = params["myip"]
       
-      @db['hosts'][hostname] = myip    
+      changes = []
+      hostnames.each do |hostname|
+        if (not @db['hosts'].include? hostname) or (@db['hosts'][hostname] != myip)
+          changes << :good
+          @db['hosts'][hostname] = myip
+        else
+          changes << :nochg
+        end
+      end
       
       if @db.changed?
         @db['serial'] += 1
         @db.save
         update
-        return @responder.response_for(:good, myip)
       end
       
-      @responder.response_for(:nochg, myip)
+      @responder.response_for_changes(changes, myip)
     end
 
     def self.run!
