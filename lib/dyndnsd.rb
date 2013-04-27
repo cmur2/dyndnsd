@@ -8,6 +8,7 @@ require 'rack'
 
 require 'dyndnsd/generator/bind'
 require 'dyndnsd/updater/command_with_bind_zone'
+require 'dyndnsd/responder/dyndns_style'
 require 'dyndnsd/responder/rest_style'
 require 'dyndnsd/database'
 require 'dyndnsd/version'
@@ -110,7 +111,7 @@ module Dyndnsd
 
       db = Database.new(config['db'])
       updater = Updater::CommandWithBindZone.new(config['updater']['params']) if config['updater']['name'] == 'command_with_bind_zone'
-      responder = Responder::RestStyle.new
+      responder = Responder::DynDNSStyle.new
       
       app = Daemon.new(config, db, updater, responder)
       app = Rack::Auth::Basic.new(app, "DynDNS") do |user,pass|
