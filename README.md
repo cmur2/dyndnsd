@@ -39,11 +39,14 @@ updater:
     email_addr: "admin.example.org."
 # user database with hostnames a user is allowed to update
 users:
+  # 'foo' is username, 'secret' the password
   foo:
     password: "secret"
     hosts:
       - foo.example.org
       - bar.example.org
+  test:
+    password: "ihavenohosts"
 ```
 
 Run dyndnsd.rb by:
@@ -52,7 +55,7 @@ Run dyndnsd.rb by:
 
 ## Using dyndnsd.rb with [NSD](https://www.nlnetlabs.nl/nsd/)
 
-NSD is a nice opensource, authoritative-only DNS server that reads BIND-style zone files (and converts them into it's own database) and has a simple config file.
+NSD is a nice opensource, authoritative-only, low-memory DNS server that reads BIND-style zone files (and converts them into it's own database) and has a simple config file.
 
 A feature NSD is lacking is the [Dynamic DNS update](https://tools.ietf.org/html/rfc2136) functionality BIND offers but one can fake it using the following dyndnsd.rb config:
 
@@ -72,6 +75,7 @@ updater:
     dns: "dns.example.org."
     email_addr: "admin.example.org."
     # specify additional raw BIND-style zone content
+    # here: an A record for dyn.example.org itself
     additional_zone_content: "@ IN A 1.2.3.4"
 users:
   foo:
@@ -79,6 +83,37 @@ users:
     hosts:
       - foo.example.org  
 ```
+
+Start dyndnsd.rb before NSD to make sure the zone file exists else NSD complains.
+
+## Using dyndnsd.rb with X
+
+Please provide ideas if you are using dyndnsd.rb with other DNS servers :)
+
+## Advanced topics
+
+### Update URL
+
+The update URL you want to tell your clients (humans or scripts ^^) consists of the following
+
+	http[s]://[USER]:[PASSWORD]@[DOMAIN]:[PORT]/nic/update?hostname=[HOSTNAMES]&myip=[MYIP]
+
+where:
+
+* the protocol depends on your (webserver/proxy) settings
+* USER and PASSWORD are needed for HTTP Basic Auth and valid combinations are defined in your config.yaml
+* DOMAIN should match what you defined in your config.yaml as domain but may be anything else when using a webserver as proxy
+* PORT depends on your (webserver/proxy) settings
+* HOSTNAMES is a required list of comma separated FQDNs (they all have to end with your config.yaml domain) the user wants to update
+* MYIP is optional and the HTTP client's address will be used if missing
+
+### SSL, multiple listen ports
+
+Use a webserver as a proxy to handle SSL and/or multiple listen addresses and ports. DynDNS.com provides HTTP on port 80 and 8245 and HTTPS on port 443.
+
+### Init scripts
+
+Coming soon for Debian 6.
 
 ## License
 
