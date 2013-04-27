@@ -119,7 +119,7 @@ module Dyndnsd
       config = YAML::load(File.open(config_file, 'r') { |f| f.read })
 
       db = Database.new(config['db'])
-      updater = Updater::CommandWithBindZone.new(config['updater']['params']) if config['updater']['name'] == 'command_with_bind_zone'
+      updater = Updater::CommandWithBindZone.new(config['domain'], config['updater']['params']) if config['updater']['name'] == 'command_with_bind_zone'
       responder = Responder::DynDNSStyle.new
       
       app = Daemon.new(config, db, updater, responder)

@@ -2,10 +2,10 @@
 module Dyndnsd
   module Updater
     class CommandWithBindZone
-      def initialize(config)
+      def initialize(domain, config)
         @zone_file = config['zone_file']
         @command = config['command']
-        @generator = Generator::Bind.new(config)
+        @generator = Generator::Bind.new(domain, config)
       end
       
       def update(zone)
