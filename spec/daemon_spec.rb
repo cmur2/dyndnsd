@@ -9,7 +9,7 @@ describe Dyndnsd::Daemon do
       'users' => {
         'test' => {
           'password' => 'secret',
-          'hosts' => ['foo.example.org']
+          'hosts' => ['foo.example.org', 'bar.example.org']
         }
       }
     }
@@ -103,11 +103,21 @@ describe Dyndnsd::Daemon do
     last_response.body.should == 'notfqdn'
   end
   
-  it 'outputs status per hostname' do
-    pending
+  it 'outputs status for hostname' do
+    authorize 'test', 'secret'
+
+    get '/nic/update?hostname=foo.example.org&myip=1.2.3.4'
+    last_response.should be_ok
+    last_response.body.should == 'good 1.2.3.4'
   end
   
   it 'supports multiple hostnames in request' do
+    authorize 'test', 'secret'
+    
     pending
+    
+    get '/nic/update?hostname=foo.example.org,bar.example.org&myip=1.2.3.4'
+    last_response.should be_ok
+    last_response.body.should == "good 1.2.3.4\ngood 1.2.3.4"
   end
 end
