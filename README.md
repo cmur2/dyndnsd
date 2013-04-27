@@ -113,7 +113,7 @@ Use a webserver as a proxy to handle SSL and/or multiple listen addresses and po
 
 ### Init scripts
 
-Coming soon for Debian 6.
+The [Debian 6 init.d script](init.d/debian-6-dyndnsd) assumes that dyndnsd.rb is installed into the system ruby (no RVM support) and the config.yaml is at /opt/dyndnsd/config.yaml.
 
 ## License
 
