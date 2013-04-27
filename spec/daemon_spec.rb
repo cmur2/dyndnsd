@@ -5,6 +5,7 @@ describe Dyndnsd::Daemon do
   
   def app
     config = {
+      'domain' => 'example.org',
       'users' => {
         'test' => {
           'password' => 'secret',
@@ -79,7 +80,27 @@ describe Dyndnsd::Daemon do
   end
   
   it 'forbids invalid hostnames' do
-    pending
+    authorize 'test', 'secret'
+    
+    get '/nic/update?hostname=test'
+    last_response.should be_ok
+    last_response.body.should == 'notfqdn'
+    
+    get '/nic/update?hostname=test.example.com'
+    last_response.should be_ok
+    last_response.body.should == 'notfqdn'
+    
+    get '/nic/update?hostname=test.example.org.me'
+    last_response.should be_ok
+    last_response.body.should == 'notfqdn'
+    
+    get '/nic/update?hostname=foo.test.example.org'
+    last_response.should be_ok
+    last_response.body.should == 'notfqdn'
+    
+    get '/nic/update?hostname=in%20valid.example.org.me'
+    last_response.should be_ok
+    last_response.body.should == 'notfqdn'
   end
   
   it 'outputs status per hostname' do

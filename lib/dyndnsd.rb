@@ -31,6 +31,7 @@ module Dyndnsd
   class Daemon
     def initialize(config, db, updater, responder)
       @users = config['users']
+      @domain = config['domain']
       @db = db
       @updater = updater
       @responder = responder
@@ -45,6 +46,14 @@ module Dyndnsd
       @updater.update(@db)
     end
     
+    def is_fqdn_valid?(hostname)
+      return false if hostname.length < @domain.length + 2
+      return false if not hostname.end_with?(@domain)
+      name = hostname.chomp(@domain)
+      return false if not name.match(/^[a-zA-Z0-9_-]+\.$/)
+      true
+    end
+    
     def call(env)
       return @responder.response_for(:method_forbidden) if env["REQUEST_METHOD"] != "GET"
       return @responder.response_for(:not_found) if env["PATH_INFO"] != "/nic/update"
@@ -55,8 +64,8 @@ module Dyndnsd
       
       hostname = params["hostname"]
       
-      # Check if hostname(s) match rules
-      #return @responder.response_for(:hostname_malformed) if XY
+      # Check if hostname match rules
+      return @responder.response_for(:hostname_malformed) if not is_fqdn_valid?(hostname)
       
       user = env["REMOTE_USER"]
       
