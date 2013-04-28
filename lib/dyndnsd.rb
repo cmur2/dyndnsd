@@ -5,6 +5,7 @@ require 'ipaddr'
 require 'json'
 require 'yaml'
 require 'rack'
+require 'metriks'
 
 require 'dyndnsd/generator/bind'
 require 'dyndnsd/updater/command_with_bind_zone'
@@ -74,7 +75,7 @@ module Dyndnsd
       hostnames.each do |hostname|
         return @responder.response_for_error(:host_forbidden) if not @users[user]['hosts'].include? hostname
       end
-      
+
       # no myip?
       if not params["myip"]
         params["myip"] = env["REMOTE_ADDR"]
@@ -89,6 +90,7 @@ module Dyndnsd
       
       myip = params["myip"]
       
+      Metriks.meter('requests.valid').mark
       Dyndnsd.logger.info "Request to update #{hostnames} to #{myip} for user #{user}"
       
       changes = []
@@ -96,8 +98,10 @@ module Dyndnsd
         if (not @db['hosts'].include? hostname) or (@db['hosts'][hostname] != myip)
           changes << :good
           @db['hosts'][hostname] = myip
+          Metriks.meter('requests.good').mark
         else
           changes << :nochg
+          Metriks.meter('requests.nochg').mark
         end
       end
       
@@ -106,6 +110,7 @@ module Dyndnsd
         Dyndnsd.logger.info "Committing update ##{@db['serial']}"
         @db.save
         update
+        Metriks.meter('updates.committed').mark
       end
       
       @responder.response_for_changes(changes, myip)
@@ -140,14 +145,29 @@ module Dyndnsd
 
       Dyndnsd.logger.info "Starting..."
 
+      # configure metriks
+      reporter = Metriks::Reporter::ProcTitle.new
+      reporter.add 'good', 'sec' do
+        Metriks.meter('requests.good').mean_rate
+      end
+      reporter.add 'nochg', 'sec' do
+        Metriks.meter('requests.nochg').mean_rate
+      end
+      reporter.start
+
+      # configure daemon
       db = Database.new(config['db'])
       updater = Updater::CommandWithBindZone.new(config['domain'], config['updater']['params']) if config['updater']['name'] == 'command_with_bind_zone'
       responder = Responder::DynDNSStyle.new
       
+      # configure rack
       app = Daemon.new(config, db, updater, responder)
       app = Rack::Auth::Basic.new(app, "DynDNS") do |user,pass|
         allow = (config['users'].has_key? user) and (config['users'][user]['password'] == pass)
-        Dyndnsd.logger.warn "Login failed for #{user}" if not allow
+        if not allow
+          Dyndnsd.logger.warn "Login failed for #{user}"
+          Metriks.meter('requests.auth_failed').mark
+        end
         allow
       end
 
