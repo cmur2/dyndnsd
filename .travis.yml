@@ -7,3 +7,6 @@ rvm:
 
 gemfile:
   - Gemfile
+
+before_script:
+  - if echo $RUBY_VERSION | grep 1.8.7 >/dev/null; then gem install json; fi
