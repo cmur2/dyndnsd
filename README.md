@@ -16,6 +16,8 @@ Install the gem:
 
 	gem install dyndnsd
 
+(Optionally install the `json` gem too if you're on Ruby 1.8.)
+
 Create a configuration file in YAML format somewhere:
 
 ```yaml
