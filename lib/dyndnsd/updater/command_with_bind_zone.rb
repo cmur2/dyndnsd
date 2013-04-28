@@ -15,6 +15,8 @@ module Dyndnsd
         pid = fork do
           exec @command
         end
+        # detach so children don't become zombies
+        Process.detach(pid)
       end
     end
   end
