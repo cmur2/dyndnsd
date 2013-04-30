@@ -24,6 +24,9 @@ Create a configuration file in YAML format somewhere:
 # listen address and port
 host: "0.0.0.0"
 port: "80"
+# optional: drop priviliges in case you want to but you may need sudo for external commands
+user: "nobody"
+group: "nogroup"
 # logfile is optional, logs to STDOUT else
 logfile: "dyndnsd.log"
 # interal database file

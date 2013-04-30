@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'etc'
 require 'logger'
 require 'ipaddr'
 require 'json'
@@ -144,6 +145,10 @@ module Dyndnsd
       Dyndnsd.logger.formatter = LogFormatter.new
 
       Dyndnsd.logger.info "Starting..."
+      
+      # drop privs (first change group than user)
+      Process::Sys.setgid(Etc.getgrnam(config['group']).gid) if config['group']
+      Process::Sys.setuid(Etc.getpwnam(config['user']).uid) if config['user']
 
       # configure metriks
       reporter = Metriks::Reporter::ProcTitle.new
