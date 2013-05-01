@@ -10,6 +10,8 @@ dyndnsd.rb is aimed to implement a small [DynDNS-compliant](http://dyn.com/suppo
 
 The is currently one updater shipped with dyndnsd.rb `command_with_bind_zone` that writes out a zone file in BIND syntax onto the current system and invokes a user-supplied command afterwards that is assumed to trigger the DNS server (not necessarily BIND since it's zone files are read by other DNS servers too) to reload it's zone configuration.
 
+Because of the mechanisms used dyndnsd.rb is known to work only on *nix systems.
+
 ## General Usage
 
 Install the gem:
