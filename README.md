@@ -18,8 +18,6 @@ Install the gem:
 
 	gem install dyndnsd
 
-(Optionally install the `json` gem too if you're on Ruby 1.8.)
-
 Create a configuration file in YAML format somewhere:
 
 ```yaml
@@ -120,7 +118,7 @@ Use a webserver as a proxy to handle SSL and/or multiple listen addresses and po
 
 ### Init scripts
 
-The [Debian 6 init.d script](init.d/debian-6-dyndnsd) assumes that dyndnsd.rb is installed into the system ruby (no RVM support) and the config.yaml is at /opt/dyndnsd/config.yaml.
+The [Debian 6 init.d script](init.d/debian-6-dyndnsd) assumes that dyndnsd.rb is installed into the system ruby (no RVM support) and the config.yaml is at /opt/dyndnsd/config.yaml. Modify to your needs.
 
 ## License
 
