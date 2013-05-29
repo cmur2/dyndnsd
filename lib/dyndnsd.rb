@@ -151,14 +151,23 @@ module Dyndnsd
       Process::Sys.setuid(Etc.getpwnam(config['user']).uid) if config['user']
 
       # configure metriks
-      reporter = Metriks::Reporter::ProcTitle.new
-      reporter.add 'good', 'sec' do
-        Metriks.meter('requests.good').mean_rate
+      if config['graphite']
+        host = config['graphite']['host'] || 'localhost'
+        port = config['graphite']['port'] || 2003
+        options = {}
+        options[:prefix] = config['graphite']['prefix'] if config['graphite']['prefix']
+        reporter = Metriks::Reporter::Graphite.new(host, port, options)
+        reporter.start
+      else
+        reporter = Metriks::Reporter::ProcTitle.new
+        reporter.add 'good', 'sec' do
+          Metriks.meter('requests.good').mean_rate
+        end
+        reporter.add 'nochg', 'sec' do
+          Metriks.meter('requests.nochg').mean_rate
+        end
+        reporter.start
       end
-      reporter.add 'nochg', 'sec' do
-        Metriks.meter('requests.nochg').mean_rate
-      end
-      reporter.start
 
       # configure daemon
       db = Database.new(config['db'])
