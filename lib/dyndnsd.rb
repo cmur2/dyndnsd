@@ -7,6 +7,7 @@ require 'json'
 require 'yaml'
 require 'rack'
 require 'metriks'
+require 'metriks/reporter/graphite'
 
 require 'dyndnsd/generator/bind'
 require 'dyndnsd/updater/command_with_bind_zone'
