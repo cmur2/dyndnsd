@@ -23,18 +23,21 @@ case "$1" in
   start)
     log_daemon_msg "Starting dyndnsd.rb" "dyndnsd"
     start-stop-daemon --start --quiet --oknodo --make-pidfile --pidfile "/var/run/dyndnsd.pid" --background --exec $DAEMON -- $DAEMON_OPTS
+    log_end_msg $?
     ;;
   stop)
     log_daemon_msg "Stopping dyndnsd.rb" "dyndnsd"
     start-stop-daemon --stop --quiet --oknodo --pidfile "/var/run/dyndnsd.pid"
+    log_end_msg $?
     ;;
   restart|force-reload)
     log_daemon_msg "Restarting dyndnsd.rb" "dyndnsd"
     start-stop-daemon --stop --quiet --oknodo --retry 30 --pidfile "/var/run/dyndsd.pid"
     start-stop-daemon --start --quiet --oknodo --make-pidfile --pidfile "/var/run/dyndnsd.pid" --background --exec $DAEMON -- $DAEMON_OPTS
+    log_end_msg $?
     ;;
   *)
-    echo "Usage: $0 {start|stop|restart|force-reload}" >&2
-    exit 1
+    log_action_msg "Usage: $0 {start|stop|restart|force-reload}"
+    exit 2
     ;;
 esac
