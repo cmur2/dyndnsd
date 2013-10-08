@@ -190,6 +190,10 @@ module Dyndnsd
         Dyndnsd.logger.info "Quitting..."
         Rack::Handler::WEBrick.shutdown
       end
+      Signal.trap('TERM') do
+        Dyndnsd.logger.info "Quitting..."
+        Rack::Handler::WEBrick.shutdown
+      end
 
       Rack::Handler::WEBrick.run app, :Host => config['host'], :Port => config['port']
     end

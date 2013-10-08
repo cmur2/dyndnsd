@@ -40,7 +40,7 @@ describe Dyndnsd::Daemon do
     last_response.status.should == 405
   end
   
-  it 'provides only the /nic/update' do
+  it 'provides only the /nic/update URL' do
     authorize 'test', 'secret'
     get '/other/url'
     last_response.status.should == 404
@@ -99,7 +99,7 @@ describe Dyndnsd::Daemon do
     last_response.body.should == 'nohost'
   end
   
-  it 'updates a host on change' do
+  it 'updates a host on IPv4 change' do
     authorize 'test', 'secret'
     
     get '/nic/update?hostname=foo.example.org&myip=1.2.3.4'
@@ -110,7 +110,7 @@ describe Dyndnsd::Daemon do
     last_response.body.should == 'good 1.2.3.40'
   end
   
-  it 'returns no change' do
+  it 'returns IPv4 no change' do
     authorize 'test', 'secret'
     
     get '/nic/update?hostname=foo.example.org&myip=1.2.3.4'
@@ -121,7 +121,7 @@ describe Dyndnsd::Daemon do
     last_response.body.should == 'nochg 1.2.3.4'
   end
   
-  it 'outputs status per hostname' do
+  it 'outputs IPv4 status per hostname' do
     authorize 'test', 'secret'
 
     get '/nic/update?hostname=foo.example.org&myip=1.2.3.4'
@@ -133,7 +133,7 @@ describe Dyndnsd::Daemon do
     last_response.body.should == "nochg 1.2.3.4\ngood 1.2.3.4"
   end
   
-  it 'uses clients remote address if myip not specified' do
+  it 'uses clients remote IPv4 address if myip not specified' do
     authorize 'test', 'secret'
     get '/nic/update?hostname=foo.example.org'
     last_response.should be_ok
