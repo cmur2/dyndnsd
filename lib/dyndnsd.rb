@@ -85,7 +85,7 @@ module Dyndnsd
       
       # malformed myip?
       begin
-        IPAddr.new(params["myip"], Socket::AF_INET)
+        IPAddr.new(params["myip"])
       rescue ArgumentError
         params["myip"] = env["REMOTE_ADDR"]
       end
