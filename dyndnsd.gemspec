@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
 
   s.executables = ['dyndnsd']
 
-  s.add_runtime_dependency 'rack'
+  s.add_runtime_dependency 'rack', '~> 1.6'
   s.add_runtime_dependency 'json'
   s.add_runtime_dependency 'metriks'
 
