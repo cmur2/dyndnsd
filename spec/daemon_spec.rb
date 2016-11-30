@@ -166,4 +166,11 @@ describe Dyndnsd::Daemon do
     last_response.should be_ok
     last_response.body.should == 'good 127.0.0.1'
   end
+
+  it 'uses clients remote IP address from X-Real-IP header if behind proxy' do
+    authorize 'test', 'secret'
+    get '/nic/update?hostname=foo.example.org', '', 'HTTP_X_REAL_IP' => '10.0.0.1'
+    last_response.should be_ok
+    last_response.body.should == 'good 10.0.0.1'
+  end
 end

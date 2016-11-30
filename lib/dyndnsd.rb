@@ -44,11 +44,11 @@ module Dyndnsd
       @db['hosts'] ||= {}
       (@db.save; update) if @db.changed?
     end
-    
+
     def update
       @updater.update(@db)
     end
-    
+
     def is_fqdn_valid?(hostname)
       return false if hostname.length < @domain.length + 2
       return false if not hostname.end_with?(@domain)
@@ -56,45 +56,52 @@ module Dyndnsd
       return false if not name.match(/^[a-zA-Z0-9_-]+\.$/)
       true
     end
-    
+
     def call(env)
       return @responder.response_for_error(:method_forbidden) if env["REQUEST_METHOD"] != "GET"
       return @responder.response_for_error(:not_found) if env["PATH_INFO"] != "/nic/update"
-      
+
       params = Rack::Utils.parse_query(env["QUERY_STRING"])
-      
+
       return @responder.response_for_error(:hostname_missing) if not params["hostname"]
-      
+
       hostnames = params["hostname"].split(',')
-      
+
       # Check if hostname match rules
       hostnames.each do |hostname|
         return @responder.response_for_error(:hostname_malformed) if not is_fqdn_valid?(hostname)
       end
-      
+
       user = env["REMOTE_USER"]
-      
+
       hostnames.each do |hostname|
         return @responder.response_for_error(:host_forbidden) if not @users[user]['hosts'].include? hostname
       end
 
-      # no myip?
-      if not params["myip"]
-        params["myip"] = env["REMOTE_ADDR"]
+      # fallback value, always present
+      myip = env["REMOTE_ADDR"]
+
+      # check whether X-Real-IP header has valid IPAddr
+      if env.has_key?("HTTP_X_REAL_IP")
+        begin
+          IPAddr.new(env["HTTP_X_REAL_IP"])
+          myip = env["HTTP_X_REAL_IP"]
+        rescue ArgumentError
+        end
       end
-      
-      # malformed myip?
-      begin
-        IPAddr.new(params["myip"])
-      rescue ArgumentError
-        params["myip"] = env["REMOTE_ADDR"]
+
+      # check whether myip parameter has valid IPAddr
+      if params.has_key?("myip")
+        begin
+          IPAddr.new(params["myip"])
+          myip = params["myip"]
+        rescue ArgumentError
+        end
       end
-      
-      myip = params["myip"]
-      
+
       Metriks.meter('requests.valid').mark
       Dyndnsd.logger.info "Request to update #{hostnames} to #{myip} for user #{user}"
-      
+
       changes = []
       hostnames.each do |hostname|
         if (not @db['hosts'].include? hostname) or (@db['hosts'][hostname] != myip)
@@ -106,7 +113,7 @@ module Dyndnsd
           Metriks.meter('requests.nochg').mark
         end
       end
-      
+
       if @db.changed?
         @db['serial'] += 1
         Dyndnsd.logger.info "Committing update ##{@db['serial']}"
@@ -114,7 +121,7 @@ module Dyndnsd
         update
         Metriks.meter('updates.committed').mark
       end
-      
+
       @responder.response_for_changes(changes, myip)
     end
 
@@ -130,23 +137,23 @@ module Dyndnsd
         puts "Config file not found!"
         exit 1
       end
-      
+
       puts "DynDNSd version #{Dyndnsd::VERSION}"
       puts "Using config file #{config_file}"
 
       config = YAML::load(File.open(config_file, 'r') { |f| f.read })
-      
+
       if config['logfile']
         Dyndnsd.logger = Logger.new(config['logfile'])
       else
         Dyndnsd.logger = Logger.new(STDOUT)
       end
-      
+
       Dyndnsd.logger.progname = "dyndnsd"
       Dyndnsd.logger.formatter = LogFormatter.new
 
       Dyndnsd.logger.info "Starting..."
-      
+
       # drop privs (first change group than user)
       Process::Sys.setgid(Etc.getgrnam(config['group']).gid) if config['group']
       Process::Sys.setuid(Etc.getpwnam(config['user']).uid) if config['user']
@@ -174,7 +181,7 @@ module Dyndnsd
       db = Database.new(config['db'])
       updater = Updater::CommandWithBindZone.new(config['domain'], config['updater']['params']) if config['updater']['name'] == 'command_with_bind_zone'
       responder = Responder::DynDNSStyle.new
-      
+
       # configure rack
       app = Daemon.new(config, db, updater, responder)
       app = Rack::Auth::Basic.new(app, "DynDNS") do |user,pass|
