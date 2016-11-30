@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.executables = ['dyndnsd']
 
   s.add_runtime_dependency 'rack', '~> 1.6'
-  s.add_runtime_dependency 'json'
+  s.add_runtime_dependency 'json', '~> 1.8'
   s.add_runtime_dependency 'metriks'
 
   s.add_development_dependency 'bundler', '~> 1.3'
