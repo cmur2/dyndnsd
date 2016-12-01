@@ -6,3 +6,6 @@ rvm:
 
 gemfile:
   - Gemfile
+
+before_install:
+  - gem install bundler
