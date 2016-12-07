@@ -120,6 +120,8 @@ The following rules apply:
 * use any IP address provided via the X-Real-IP header e.g. when used behind HTTP reverse proxy such as nginx, or
 * use any IP address used by the connecting HTTP client
 
+If you want to provide an additional IPv6 address as myip6 parameter the myip parameter containing an IPv4 address has to be present, too! No automatism is applied then.
+
 ### SSL, multiple listen ports
 
 Use a webserver as a proxy to handle SSL and/or multiple listen addresses and ports. DynDNS.com provides HTTP on port 80 and 8245 and HTTPS on port 443.

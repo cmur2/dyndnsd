@@ -78,24 +78,40 @@ module Dyndnsd
         return @responder.response_for_error(:host_forbidden) if not @users[user]['hosts'].include? hostname
       end
 
-      # fallback value, always present
-      myip = env["REMOTE_ADDR"]
+      myip = nil
 
-      # check whether X-Real-IP header has valid IPAddr
-      if env.has_key?("HTTP_X_REAL_IP")
+      if params.has_key?("myip6")
+        # require presence of myip parameter as valid IPAddr (v4) and valid myip6
+        return @responder.response_for_error(:host_forbidden) if not params["myip"]
         begin
-          IPAddr.new(env["HTTP_X_REAL_IP"])
-          myip = env["HTTP_X_REAL_IP"]
+          IPAddr.new(params["myip"], Socket::AF_INET)
+          IPAddr.new(params["myip6"], Socket::AF_INET6)
+          
+          # myip will be an array
+          myip = [params["myip"], params["myip6"]]
         rescue ArgumentError
+          return @responder.response_for_error(:host_forbidden)
         end
-      end
+      else
+        # fallback value, always present
+        myip = env["REMOTE_ADDR"]
 
-      # check whether myip parameter has valid IPAddr
-      if params.has_key?("myip")
-        begin
-          IPAddr.new(params["myip"])
-          myip = params["myip"]
-        rescue ArgumentError
+        # check whether X-Real-IP header has valid IPAddr
+        if env.has_key?("HTTP_X_REAL_IP")
+          begin
+            IPAddr.new(env["HTTP_X_REAL_IP"])
+            myip = env["HTTP_X_REAL_IP"]
+          rescue ArgumentError
+          end
+        end
+
+        # check whether myip parameter has valid IPAddr
+        if params.has_key?("myip")
+          begin
+            IPAddr.new(params["myip"])
+            myip = params["myip"]
+          rescue ArgumentError
+          end
         end
       end
 

@@ -18,11 +18,13 @@ module Dyndnsd
         out << "@ IN SOA #{@dns} #{@email_addr} ( #{zone['serial']} 3h 5m 1w 1h )"
         out << "@ IN NS #{@dns}"
         out << ""
-        zone['hosts'].each do |hostname,ip|
-          ip = IPAddr.new(ip).native
-          type = ip.ipv6? ? "AAAA" : "A"
-          name = hostname.chomp('.' + @domain)
-          out << "#{name} IN #{type} #{ip}"
+        zone['hosts'].each do |hostname,ips|
+          (ips.is_a?(Array) ? ips : [ips]).each do |ip|
+            ip = IPAddr.new(ip).native
+            type = ip.ipv6? ? "AAAA" : "A"
+            name = hostname.chomp('.' + @domain)
+            out << "#{name} IN #{type} #{ip}"
+          end
         end
         out << ""
         out << @additional_zone_content

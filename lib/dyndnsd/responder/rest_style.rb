@@ -11,9 +11,9 @@ module Dyndnsd
         return [403, {"Content-Type" => "text/plain"}, ["Forbidden"]] if state == :host_forbidden
         return [422, {"Content-Type" => "text/plain"}, ["Hostname malformed"]] if state == :hostname_malformed
       end
-      
+
       def response_for_changes(states, ip)
-        body = states.map { |state| state == :good ? "Changed to #{ip}" : "No change needed for #{ip}" }.join("\n")
+        body = states.map { |state| state == :good ? "Changed to #{ip.is_a?(Array) ? ip.join(' ') : ip}" : "No change needed for #{ip.is_a?(Array) ? ip.join(' ') : ip}" }.join("\n")
         return [200, {"Content-Type" => "text/plain"}, [body]]
       end
     end

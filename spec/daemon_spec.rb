@@ -170,8 +170,37 @@ describe Dyndnsd::Daemon do
 
   it 'uses clients remote IP address from X-Real-IP header if behind proxy' do
     authorize 'test', 'secret'
+
     get '/nic/update?hostname=foo.example.org', '', 'HTTP_X_REAL_IP' => '10.0.0.1'
     expect(last_response).to be_ok
     expect(last_response.body).to eq('good 10.0.0.1')
+
+    get '/nic/update?hostname=foo.example.org', '', 'HTTP_X_REAL_IP' => '2001:db8::1'
+    expect(last_response).to be_ok
+    expect(last_response.body).to eq('good 2001:db8::1')
+  end
+
+  it 'supports an IPv4 and an IPv6 address in one request' do
+    authorize 'test', 'secret'
+
+    get '/nic/update?hostname=foo.example.org&myip=1.2.3.4&myip6=2001:db8::1'
+    expect(last_response).to be_ok
+    expect(last_response.body).to eq("good 1.2.3.4 2001:db8::1")
+
+    get '/nic/update?hostname=foo.example.org&myip=BROKENIP&myip6=2001:db8::1'
+    expect(last_response).to be_ok
+    expect(last_response.body).to eq('nohost')
+
+    get '/nic/update?hostname=foo.example.org&myip=1.2.3.4&myip6=BROKENIP'
+    expect(last_response).to be_ok
+    expect(last_response.body).to eq('nohost')
+
+    get '/nic/update?hostname=foo.example.org&myip6=2001:db8::10'
+    expect(last_response).to be_ok
+    expect(last_response.body).to eq('nohost')
+
+    get '/nic/update?hostname=foo.example.org&myip=1.2.3.40'
+    expect(last_response).to be_ok
+    expect(last_response.body).to eq('good 1.2.3.40')
   end
 end
