@@ -201,7 +201,7 @@ module Dyndnsd
       # configure rack
       app = Daemon.new(config, db, updater, responder)
       app = Rack::Auth::Basic.new(app, "DynDNS") do |user,pass|
-        allow = (config['users'].has_key? user) and (config['users'][user]['password'] == pass)
+        allow = ((config['users'].has_key? user) and (config['users'][user]['password'] == pass))
         if not allow
           Dyndnsd.logger.warn "Login failed for #{user}"
           Metriks.meter('requests.auth_failed').mark
