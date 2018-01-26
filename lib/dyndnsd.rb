@@ -86,7 +86,7 @@ module Dyndnsd
         begin
           IPAddr.new(params["myip"], Socket::AF_INET)
           IPAddr.new(params["myip6"], Socket::AF_INET6)
-          
+
           # myip will be an array
           myip = [params["myip"], params["myip6"]]
         rescue ArgumentError
