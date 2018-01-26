@@ -9,6 +9,7 @@ IMPROVEMENTS:
 - Better code maintainability by refactorings
 - Update dependencies, mainly `rack` to new major version 2
 - Add Ruby 2.5 support
+- Add experimental [OpenTracing](http://opentracing.io/) support with [CNCF Jaeger](https://github.com/jaegertracing/jaeger)
 
 ## 1.6.1 (October 31, 2017)
 

@@ -9,14 +9,19 @@ module Dyndnsd
       end
 
       def update(zone)
-        # write zone file in bind syntax
-        File.open(@zone_file, 'w') { |f| f.write(@generator.generate(zone)) }
-        # call user-defined command
-        pid = fork do
-          exec @command
+        Helper.span('updater_update') do |span|
+          span.set_tag('dyndnsd.updater.name', self.class.name.split('::').last)
+
+          # write zone file in bind syntax
+          File.open(@zone_file, 'w') { |f| f.write(@generator.generate(zone)) }
+          # call user-defined command
+          pid = fork do
+            exec @command
+          end
+
+          # detach so children don't become zombies
+          Process.detach(pid)
         end
-        # detach so children don't become zombies
-        Process.detach(pid)
       end
     end
   end

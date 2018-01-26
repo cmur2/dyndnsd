@@ -17,5 +17,25 @@ module Dyndnsd
     rescue ArgumentError
       return false
     end
+
+    def self.user_allowed?(username, password, users)
+      (users.key? username) && (users[username]['password'] == password)
+    end
+
+    def self.changed?(hostname, myips, hosts)
+      # myips order is always deterministic
+      (!hosts.include? hostname) || (hosts[hostname] != myips)
+    end
+
+    def self.span(operation, &block)
+      span = OpenTracing.start_span(operation)
+      span.set_tag('component', 'dyndnsd')
+      span.set_tag('span.kind', 'server')
+      begin
+        block.call(span)
+      ensure
+        span.finish
+      end
+    end
   end
 end

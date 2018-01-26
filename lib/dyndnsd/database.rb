@@ -21,8 +21,10 @@ module Dyndnsd
     end
 
     def save
-      File.open(@db_file, 'w') { |f| JSON.dump(@db, f) }
-      @db_hash = @db.hash
+      Helper.span('database_save') do |_span|
+        File.open(@db_file, 'w') { |f| JSON.dump(@db, f) }
+        @db_hash = @db.hash
+      end
     end
 
     def changed?

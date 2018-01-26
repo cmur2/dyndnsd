@@ -8,6 +8,9 @@ require 'yaml'
 require 'rack'
 require 'metriks'
 require 'metriks/reporter/graphite'
+require 'opentracing'
+require 'rack/tracer'
+require 'spanmanager'
 
 require 'dyndnsd/generator/bind'
 require 'dyndnsd/updater/command_with_bind_zone'
@@ -49,12 +52,16 @@ module Dyndnsd
     end
 
     def authorized?(username, password)
-      allow = ((@users.key? username) && (@users[username]['password'] == password))
-      if !allow
-        Dyndnsd.logger.warn "Login failed for #{username}"
-        Metriks.meter('requests.auth_failed').mark
+      Helper.span('check_authorized') do |span|
+        span.set_tag('dyndnsd.user', username)
+
+        allow = Helper.user_allowed?(username, password, @users)
+        if !allow
+          Dyndnsd.logger.warn "Login failed for #{username}"
+          Metriks.meter('requests.auth_failed').mark
+        end
+        allow
       end
-      allow
     end
 
     def call(env)
@@ -95,6 +102,8 @@ module Dyndnsd
 
       setup_monitoring(config)
 
+      setup_tracing(config)
+
       setup_rack(config)
     end
 
@@ -127,15 +136,19 @@ module Dyndnsd
 
     def process_changes(hostnames, myips)
       changes = []
-      hostnames.each do |hostname|
-        # myips order is always deterministic
-        if (!@db['hosts'].include? hostname) || (@db['hosts'][hostname] != myips)
-          @db['hosts'][hostname] = myips
-          changes << :good
-          Metriks.meter('requests.good').mark
-        else
-          changes << :nochg
-          Metriks.meter('requests.nochg').mark
+      Helper.span('process_changes') do |span|
+        span.set_tag('dyndnsd.hostnames', hostnames.join(','))
+
+        hostnames.each do |hostname|
+          # myips order is always deterministic
+          if Helper.changed?(hostname, myips, @db['hosts'])
+            @db['hosts'][hostname] = myips
+            changes << :good
+            Metriks.meter('requests.good').mark
+          else
+            changes << :nochg
+            Metriks.meter('requests.nochg').mark
+          end
         end
       end
       changes
@@ -158,7 +171,7 @@ module Dyndnsd
       hostnames = params['hostname'].split(',')
 
       # check for invalid hostnames
-      invalid_hostnames = hostnames.select { |hostname| !Helper.fqdn_valid?(hostname, @domain) }
+      invalid_hostnames = hostnames.select { |h| !Helper.fqdn_valid?(h, @domain) }
       return [422, {'X-DynDNS-Response' => 'hostname_malformed'}, []] if invalid_hostnames.any?
 
       user = env['REMOTE_USER']
@@ -227,6 +240,22 @@ module Dyndnsd
       end
     end
 
+    private_class_method def self.setup_tracing(config)
+      # configure OpenTracing
+      if config.dig('tracing', 'jaeger')
+        require 'jaeger/client'
+
+        host = config['tracing']['jaeger']['host'] || '127.0.0.1'
+        port = config['tracing']['jaeger']['port'] || 6831
+        service_name = config['tracing']['jaeger']['service_name'] || 'dyndnsd'
+        OpenTracing.global_tracer = Jaeger::Client.build(
+          host: host, port: port, service_name: service_name, flush_interval: 1
+        )
+      end
+      # always use SpanManager
+      OpenTracing.global_tracer = SpanManager::Tracer.new(OpenTracing.global_tracer)
+    end
+
     private_class_method def self.setup_rack(config)
       # configure daemon
       db = Database.new(config['db'])
@@ -241,6 +270,9 @@ module Dyndnsd
       else
         app = Responder::DynDNSStyle.new(app)
       end
+
+      trust_incoming_span = config.dig('tracing', 'trust_incoming_span') || false
+      app = Rack::Tracer.new(app, trust_incoming_span: trust_incoming_span)
 
       Rack::Handler::WEBrick.run app, Host: config['host'], Port: config['port']
     end

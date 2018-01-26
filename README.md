@@ -168,6 +168,44 @@ users:
     password: "ihavenohosts"
 ```
 
+### Tracing (experimental)
+
+For tracing dyndnsd.rb is instrumented using the [OpenTracing](http://opentracing.io/) framework and will emit span tracing data for the most important operations happening during the request/response cycle. Using a middleware for Rack allows handling incoming OpenTracing span information properly.
+Currently only one OpenTracing-compatible tracer implementation named [CNCF Jaeger](https://github.com/jaegertracing/jaeger) can be configured to use with dyndnsd.rb.
+
+```yaml
+host: "0.0.0.0"
+port: "8245" # the DynDNS.com alternative HTTP port
+db: "/opt/dyndnsd/db.json"
+domain: "dyn.example.org"
+# enable and configure tracing using the (currently only) tracer jaeger
+tracing:
+  trust_incoming_span: false # default value, change to accept incoming OpenTracing spans as parents
+  jaeger:
+    host: 127.0.0.1 # defaults for host and port of local jaeger-agent
+    port: 6831
+    service_name: "my.dyndnsd.identifier"
+# configure the updater, here we use command_with_bind_zone, params are updater-specific
+updater:
+  name: "command_with_bind_zone"
+  params:
+    zone_file: "dyn.zone"
+    command: "echo 'Hello'"
+    ttl: "5m"
+    dns: "dns.example.org."
+    email_addr: "admin.example.org."
+# user database with hostnames a user is allowed to update
+users:
+  # 'foo' is username, 'secret' the password
+  foo:
+    password: "secret"
+    hosts:
+      - foo.example.org
+      - bar.example.org
+  test:
+    password: "ihavenohosts"
+```
+
 ## License
 
 dyndnsd.rb is licensed under the Apache License, Version 2.0. See LICENSE for more information.

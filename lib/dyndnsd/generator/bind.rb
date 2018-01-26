@@ -10,15 +10,15 @@ module Dyndnsd
         @additional_zone_content = config['additional_zone_content']
       end
 
-      def generate(zone)
+      def generate(db)
         out = []
         out << "$TTL #{@ttl}"
         out << "$ORIGIN #{@domain}."
         out << ''
-        out << "@ IN SOA #{@dns} #{@email_addr} ( #{zone['serial']} 3h 5m 1w 1h )"
+        out << "@ IN SOA #{@dns} #{@email_addr} ( #{db['serial']} 3h 5m 1w 1h )"
         out << "@ IN NS #{@dns}"
         out << ''
-        zone['hosts'].each do |hostname, ips|
+        db['hosts'].each do |hostname, ips|
           ips.each do |ip|
             ip = IPAddr.new(ip).native
             type = ip.ipv6? ? 'AAAA' : 'A'

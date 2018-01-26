@@ -22,7 +22,9 @@ describe Dyndnsd::Daemon do
 
     app = Rack::Auth::Basic.new(daemon, 'DynDNS', &daemon.method(:authorized?))
 
-    Dyndnsd::Responder::DynDNSStyle.new(app)
+    app = Dyndnsd::Responder::DynDNSStyle.new(app)
+
+    Rack::Tracer.new(app, trust_incoming_span: false)
   end
 
   it 'requires authentication' do
