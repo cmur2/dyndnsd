@@ -18,20 +18,18 @@ describe Dyndnsd::Daemon do
     }
     db = Dyndnsd::DummyDatabase.new({})
     updater = Dyndnsd::Updater::Dummy.new
-    responder = Dyndnsd::Responder::DynDNSStyle.new
-    app = Dyndnsd::Daemon.new(config, db, updater, responder)
+    app = Dyndnsd::Daemon.new(config, db, updater)
 
-    Rack::Auth::Basic.new(app, "DynDNS") do |user,pass|
+    app = Rack::Auth::Basic.new(app, "DynDNS") do |user,pass|
       (config['users'].has_key? user) and (config['users'][user]['password'] == pass)
     end
+
+    app = Dyndnsd::Responder::DynDNSStyle.new(app)
   end
 
   it 'requires authentication' do
     get '/'
     expect(last_response.status).to eq(401)
-
-    pending 'Need to find a way to add custom body on 401 responses'
-    expect(last_response).not_to be_ok
     expect(last_response.body).to eq('badauth')
   end
 

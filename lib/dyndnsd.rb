@@ -32,12 +32,11 @@ module Dyndnsd
   end
 
   class Daemon
-    def initialize(config, db, updater, responder)
+    def initialize(config, db, updater)
       @users = config['users']
       @domain = config['domain']
       @db = db
       @updater = updater
-      @responder = responder
 
       @db.load
       @db['serial'] ||= 1
@@ -58,31 +57,31 @@ module Dyndnsd
     end
 
     def call(env)
-      return @responder.response_for_error(:method_forbidden) if env["REQUEST_METHOD"] != "GET"
-      return @responder.response_for_error(:not_found) if env["PATH_INFO"] != "/nic/update"
+      return [422, {'X-DynDNS-Response' => 'method_forbidden'}, []] if env["REQUEST_METHOD"] != "GET"
+      return [422, {'X-DynDNS-Response' => 'not_found'}, []] if env["PATH_INFO"] != "/nic/update"
 
       params = Rack::Utils.parse_query(env["QUERY_STRING"])
 
-      return @responder.response_for_error(:hostname_missing) if not params["hostname"]
+      return [422, {'X-DynDNS-Response' => 'hostname_missing'}, []] if not params["hostname"]
 
       hostnames = params["hostname"].split(',')
 
       # Check if hostname match rules
       hostnames.each do |hostname|
-        return @responder.response_for_error(:hostname_malformed) if not is_fqdn_valid?(hostname)
+        return [422, {'X-DynDNS-Response' => 'hostname_malformed'}, []] if not is_fqdn_valid?(hostname)
       end
 
       user = env["REMOTE_USER"]
 
       hostnames.each do |hostname|
-        return @responder.response_for_error(:host_forbidden) if not @users[user]['hosts'].include? hostname
+        return [422, {'X-DynDNS-Response' => 'host_forbidden'}, []] if not @users[user]['hosts'].include? hostname
       end
 
       myip = nil
 
       if params.has_key?("myip6")
         # require presence of myip parameter as valid IPAddr (v4) and valid myip6
-        return @responder.response_for_error(:host_forbidden) if not params["myip"]
+        return [422, {'X-DynDNS-Response' => 'host_forbidden'}, []] if not params["myip"]
         begin
           IPAddr.new(params["myip"], Socket::AF_INET)
           IPAddr.new(params["myip6"], Socket::AF_INET6)
@@ -90,7 +89,7 @@ module Dyndnsd
           # myip will be an array
           myip = [params["myip"], params["myip6"]]
         rescue ArgumentError
-          return @responder.response_for_error(:host_forbidden)
+          return [422, {'X-DynDNS-Response' => 'host_forbidden'}, []]
         end
       else
         # fallback value, always present
@@ -138,7 +137,7 @@ module Dyndnsd
         Metriks.meter('updates.committed').mark
       end
 
-      @responder.response_for_changes(changes, myip)
+      [200, {'X-DynDNS-Response' => 'success'}, [changes, myip]]
     end
 
     def self.run!
@@ -196,10 +195,9 @@ module Dyndnsd
       # configure daemon
       db = Database.new(config['db'])
       updater = Updater::CommandWithBindZone.new(config['domain'], config['updater']['params']) if config['updater']['name'] == 'command_with_bind_zone'
-      responder = Responder::DynDNSStyle.new
 
       # configure rack
-      app = Daemon.new(config, db, updater, responder)
+      app = Daemon.new(config, db, updater)
       app = Rack::Auth::Basic.new(app, "DynDNS") do |user,pass|
         allow = ((config['users'].has_key? user) and (config['users'][user]['password'] == pass))
         if not allow
@@ -207,6 +205,12 @@ module Dyndnsd
           Metriks.meter('requests.auth_failed').mark
         end
         allow
+      end
+
+      if config['responder'] == 'RestStyle'
+        app = Responder::RestStyle.new(app)
+      else
+        app = Responder::DynDNSStyle.new(app)
       end
 
       Signal.trap('INT') do
