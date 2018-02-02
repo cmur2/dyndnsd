@@ -69,71 +69,20 @@ module Dyndnsd
 
       config = YAML::load(File.open(config_file, 'r') { |f| f.read })
 
-      if config['logfile']
-        Dyndnsd.logger = Logger.new(config['logfile'])
-      else
-        Dyndnsd.logger = Logger.new(STDOUT)
-      end
-
-      Dyndnsd.logger.progname = "dyndnsd"
-      Dyndnsd.logger.formatter = LogFormatter.new
+      setup_logger(config)
 
       Dyndnsd.logger.info "Starting..."
 
-      # drop privs (first change group than user)
+      # drop priviliges as soon as possible
+      # NOTE: first change group than user
       Process::Sys.setgid(Etc.getgrnam(config['group']).gid) if config['group']
       Process::Sys.setuid(Etc.getpwnam(config['user']).uid) if config['user']
 
-      # configure metriks
-      if config['graphite']
-        host = config['graphite']['host'] || 'localhost'
-        port = config['graphite']['port'] || 2003
-        options = {}
-        options[:prefix] = config['graphite']['prefix'] if config['graphite']['prefix']
-        reporter = Metriks::Reporter::Graphite.new(host, port, options)
-        reporter.start
-      else
-        reporter = Metriks::Reporter::ProcTitle.new
-        reporter.add 'good', 'sec' do
-          Metriks.meter('requests.good').mean_rate
-        end
-        reporter.add 'nochg', 'sec' do
-          Metriks.meter('requests.nochg').mean_rate
-        end
-        reporter.start
-      end
+      setup_traps()
 
-      # configure daemon
-      db = Database.new(config['db'])
-      updater = Updater::CommandWithBindZone.new(config['domain'], config['updater']['params']) if config['updater']['name'] == 'command_with_bind_zone'
+      setup_monitoring(config)
 
-      # configure rack
-      app = Daemon.new(config, db, updater)
-      app = Rack::Auth::Basic.new(app, "DynDNS") do |user,pass|
-        allow = ((config['users'].has_key? user) and (config['users'][user]['password'] == pass))
-        if not allow
-          Dyndnsd.logger.warn "Login failed for #{user}"
-          Metriks.meter('requests.auth_failed').mark
-        end
-        allow
-      end
-
-      if config['responder'] == 'RestStyle'
-        app = Responder::RestStyle.new(app)
-      else
-        app = Responder::DynDNSStyle.new(app)
-      end
-
-      Signal.trap('INT') do
-        Dyndnsd.logger.info "Quitting..."
-        Rack::Handler::WEBrick.shutdown
-      end
-      Signal.trap('TERM') do
-        Dyndnsd.logger.info "Quitting..."
-        Rack::Handler::WEBrick.shutdown
-      end
-
-      Rack::Handler::WEBrick.run app, :Host => config['host'], :Port => config['port']
+      setup_rack(config)
     end
 
     private
@@ -235,6 +184,76 @@ module Dyndnsd
       update_db if @db.changed?
 
       [200, {'X-DynDNS-Response' => 'success'}, [changes, myips]]
+    end
+
+    # SETUP
+
+    def self.setup_logger(config)
+      if config['logfile']
+        Dyndnsd.logger = Logger.new(config['logfile'])
+      else
+        Dyndnsd.logger = Logger.new(STDOUT)
+      end
+
+      Dyndnsd.logger.progname = "dyndnsd"
+      Dyndnsd.logger.formatter = LogFormatter.new
+    end
+
+    def self.setup_traps()
+      Signal.trap('INT') do
+        Dyndnsd.logger.info "Quitting..."
+        Rack::Handler::WEBrick.shutdown
+      end
+      Signal.trap('TERM') do
+        Dyndnsd.logger.info "Quitting..."
+        Rack::Handler::WEBrick.shutdown
+      end
+    end
+
+    def self.setup_monitoring(config)
+      # configure metriks
+      if config['graphite']
+        host = config['graphite']['host'] || 'localhost'
+        port = config['graphite']['port'] || 2003
+        options = {}
+        options[:prefix] = config['graphite']['prefix'] if config['graphite']['prefix']
+        reporter = Metriks::Reporter::Graphite.new(host, port, options)
+        reporter.start
+      else
+        reporter = Metriks::Reporter::ProcTitle.new
+        reporter.add 'good', 'sec' do
+          Metriks.meter('requests.good').mean_rate
+        end
+        reporter.add 'nochg', 'sec' do
+          Metriks.meter('requests.nochg').mean_rate
+        end
+        reporter.start
+      end
+    end
+
+    def self.setup_rack(config)
+      # configure daemon
+      db = Database.new(config['db'])
+      updater = Updater::CommandWithBindZone.new(config['domain'], config['updater']['params']) if config['updater']['name'] == 'command_with_bind_zone'
+
+      # configure rack
+      app = Daemon.new(config, db, updater)
+      app = Rack::Auth::Basic.new(app, "DynDNS") do |user,pass|
+        allow = ((config['users'].has_key? user) and (config['users'][user]['password'] == pass))
+        if not allow
+          Dyndnsd.logger.warn "Login failed for #{user}"
+          Metriks.meter('requests.auth_failed').mark
+        end
+        allow
+      end
+
+      if config['responder'] == 'RestStyle'
+        app = Responder::RestStyle.new(app)
+      else
+        app = Responder::DynDNSStyle.new(app)
+      end
+
+      Rack::Handler::WEBrick.run app, :Host => config['host'], :Port => config['port']
     end
   end
 end
