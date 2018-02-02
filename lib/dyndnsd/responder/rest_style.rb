@@ -34,10 +34,8 @@ module Dyndnsd
         end
       end
 
-
-      def get_success_response(states, ip)
-        ips = ip.is_a?(Array) ? ip.join(' ') : ip
-        states.map { |state| state == :good ? "Changed to #{ips}" : "No change needed for #{ips}" }.join("\n")
+      def get_success_body(changes, myips)
+        changes.map { |change| change == :good ? "Changed to #{myips.join(' ')}" : "No change needed for #{myips.join(' ')}" }.join("\n")
       end
 
       def get_error_response_map

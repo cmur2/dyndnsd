@@ -146,50 +146,46 @@ module Dyndnsd
       true
     end
 
-    def extract_myips(env, params)
-      if params.has_key?("myip6")
-        # require presence of myip parameter as valid IPAddr (v4) and valid myip6
-        return [] if not params["myip"]
-        begin
-          IPAddr.new(params["myip"], Socket::AF_INET)
-          IPAddr.new(params["myip6"], Socket::AF_INET6)
-
-          # myip will be an array
-          myip = [params["myip"], params["myip6"]]
-        rescue ArgumentError
-          return []
-        end
-      else
-        # fallback value, always present
-        myip = env["REMOTE_ADDR"]
-
-        # check whether X-Real-IP header has valid IPAddr
-        if env.has_key?("HTTP_X_REAL_IP")
-          begin
-            IPAddr.new(env["HTTP_X_REAL_IP"])
-            myip = env["HTTP_X_REAL_IP"]
-          rescue ArgumentError
-          end
-        end
-
-        # check whether myip parameter has valid IPAddr
-        if params.has_key?("myip")
-          begin
-            IPAddr.new(params["myip"])
-            myip = params["myip"]
-          rescue ArgumentError
-          end
-        end
+    def is_ip_valid?(ip)
+      begin
+        IPAddr.new(ip)
+        return true
+      rescue ArgumentError
+        return false
       end
-
-      myip
     end
 
-    def process_changes(hostnames, myip)
+    def extract_v4_and_v6_address(env, params)
+      return [] if not params["myip"]
+      begin
+        IPAddr.new(params["myip"], Socket::AF_INET)
+        IPAddr.new(params["myip6"], Socket::AF_INET6)
+        [params["myip"], params["myip6"]]
+      rescue ArgumentError
+        []
+      end
+    end
+
+    def extract_myips(env, params)
+      # require presence of myip parameter as valid IPAddr (v4) and valid myip6
+      return extract_v4_and_v6_address(env, params) if params.has_key?("myip6")
+
+      # check whether myip parameter has valid IPAddr
+      return [params["myip"]] if params.has_key?("myip") and is_ip_valid?(params["myip"])
+
+      # check whether X-Real-IP header has valid IPAddr
+      return [env["HTTP_X_REAL_IP"]] if env.has_key?("HTTP_X_REAL_IP") and is_ip_valid?(env["HTTP_X_REAL_IP"])
+
+      # fallback value, always present
+      [env["REMOTE_ADDR"]]
+    end
+
+    def process_changes(hostnames, myips)
       changes = []
       hostnames.each do |hostname|
-        if (not @db['hosts'].include? hostname) or (@db['hosts'][hostname] != myip)
-          @db['hosts'][hostname] = myip
+        # myips order is always deterministic
+        if (not @db['hosts'].include? hostname) or (@db['hosts'][hostname] != myips)
+          @db['hosts'][hostname] = myips
           changes << :good
           Metriks.meter('requests.good').mark
         else
@@ -211,33 +207,34 @@ module Dyndnsd
     def handle_dyndns_request(env)
       params = Rack::Utils.parse_query(env["QUERY_STRING"])
 
+      # require hostname parameter
       return [422, {'X-DynDNS-Response' => 'hostname_missing'}, []] if not params["hostname"]
 
       hostnames = params["hostname"].split(',')
 
-      # Check if hostname match rules
-      hostnames.each do |hostname|
-        return [422, {'X-DynDNS-Response' => 'hostname_malformed'}, []] if not is_fqdn_valid?(hostname)
-      end
+      # check for invalid hostnames
+      invalid_hostnames = hostnames.select { |hostname| not is_fqdn_valid?(hostname) }
+      return [422, {'X-DynDNS-Response' => 'hostname_malformed'}, []] if invalid_hostnames.any?
 
       user = env["REMOTE_USER"]
 
-      hostnames.each do |hostname|
-        return [422, {'X-DynDNS-Response' => 'host_forbidden'}, []] if not @users[user]['hosts'].include? hostname
-      end
+      # check for hostnames that the user does not own
+      forbidden_hostnames = hostnames - @users[user]['hosts']
+      return [422, {'X-DynDNS-Response' => 'host_forbidden'}, []] if forbidden_hostnames.any?
 
-      myip = extract_myips(env, params)
+      myips = extract_myips(env, params)
 
-      return [422, {'X-DynDNS-Response' => 'host_forbidden'}, []] if myip.empty?
+      # require at least one IP to update
+      return [422, {'X-DynDNS-Response' => 'host_forbidden'}, []] if myips.empty?
 
       Metriks.meter('requests.valid').mark
-      Dyndnsd.logger.info "Request to update #{hostnames} to #{myip} for user #{user}"
+      Dyndnsd.logger.info "Request to update #{hostnames} to #{myips} for user #{user}"
 
-      changes = process_changes(hostnames, myip)
+      changes = process_changes(hostnames, myips)
 
       update_db if @db.changed?
 
-      [200, {'X-DynDNS-Response' => 'success'}, [changes, myip]]
+      [200, {'X-DynDNS-Response' => 'success'}, [changes, myips]]
     end
   end
 end

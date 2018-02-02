@@ -19,7 +19,7 @@ module Dyndnsd
         out << "@ IN NS #{@dns}"
         out << ""
         zone['hosts'].each do |hostname,ips|
-          (ips.is_a?(Array) ? ips : [ips]).each do |ip|
+          ips.each do |ip|
             ip = IPAddr.new(ip).native
             type = ip.ipv6? ? "AAAA" : "A"
             name = hostname.chomp('.' + @domain)

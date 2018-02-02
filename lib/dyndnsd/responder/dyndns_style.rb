@@ -34,9 +34,8 @@ module Dyndnsd
         end
       end
 
-      def get_success_body(states, ip)
-        ips = ip.is_a?(Array) ? ip.join(' ') : ip
-        states.map { |state| "#{state} #{ips}" }.join("\n")
+      def get_success_body(changes, myips)
+        changes.map { |change| "#{change} #{myips.join(' ')}" }.join("\n")
       end
 
       def get_error_response_map
