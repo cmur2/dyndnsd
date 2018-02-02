@@ -28,9 +28,9 @@ module Dyndnsd
 
       def decorate_other_response(status_code, headers, body)
         if status_code == 400
-          [status_code, headers, "Bad Request"]
+          [status_code, headers, ["Bad Request"]]
         elsif status_code == 401
-          [status_code, headers, "badauth"]
+          [status_code, headers, ["badauth"]]
         end
       end
 
