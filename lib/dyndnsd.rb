@@ -14,6 +14,7 @@ require 'dyndnsd/updater/command_with_bind_zone'
 require 'dyndnsd/responder/dyndns_style'
 require 'dyndnsd/responder/rest_style'
 require 'dyndnsd/database'
+require 'dyndnsd/helper'
 require 'dyndnsd/version'
 
 module Dyndnsd
@@ -87,23 +88,6 @@ module Dyndnsd
 
     private
 
-    def is_fqdn_valid?(hostname)
-      return false if hostname.length < @domain.length + 2
-      return false if not hostname.end_with?(@domain)
-      name = hostname.chomp(@domain)
-      return false if not name.match(/^[a-zA-Z0-9_-]+\.$/)
-      true
-    end
-
-    def is_ip_valid?(ip)
-      begin
-        IPAddr.new(ip)
-        return true
-      rescue ArgumentError
-        return false
-      end
-    end
-
     def extract_v4_and_v6_address(env, params)
       return [] if not params["myip"]
       begin
@@ -120,10 +104,10 @@ module Dyndnsd
       return extract_v4_and_v6_address(env, params) if params.has_key?("myip6")
 
       # check whether myip parameter has valid IPAddr
-      return [params["myip"]] if params.has_key?("myip") and is_ip_valid?(params["myip"])
+      return [params["myip"]] if params.has_key?("myip") and Helper.is_ip_valid?(params["myip"])
 
       # check whether X-Real-IP header has valid IPAddr
-      return [env["HTTP_X_REAL_IP"]] if env.has_key?("HTTP_X_REAL_IP") and is_ip_valid?(env["HTTP_X_REAL_IP"])
+      return [env["HTTP_X_REAL_IP"]] if env.has_key?("HTTP_X_REAL_IP") and Helper.is_ip_valid?(env["HTTP_X_REAL_IP"])
 
       # fallback value, always present
       [env["REMOTE_ADDR"]]
@@ -162,7 +146,7 @@ module Dyndnsd
       hostnames = params["hostname"].split(',')
 
       # check for invalid hostnames
-      invalid_hostnames = hostnames.select { |hostname| not is_fqdn_valid?(hostname) }
+      invalid_hostnames = hostnames.select { |hostname| not Helper.is_fqdn_valid?(hostname, @domain) }
       return [422, {'X-DynDNS-Response' => 'hostname_malformed'}, []] if invalid_hostnames.any?
 
       user = env["REMOTE_USER"]
