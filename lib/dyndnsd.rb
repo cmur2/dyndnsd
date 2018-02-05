@@ -45,6 +45,15 @@ module Dyndnsd
       (@db.save; @updater.update(@db)) if @db.changed?
     end
 
+    def is_authorized?(username, password)
+      allow = ((@users.has_key? username) and (@users[username]['password'] == password))
+      if not allow
+        Dyndnsd.logger.warn "Login failed for #{username}"
+        Metriks.meter('requests.auth_failed').mark
+      end
+      allow
+    end
+
     def call(env)
       return [422, {'X-DynDNS-Response' => 'method_forbidden'}, []] if env["REQUEST_METHOD"] != "GET"
       return [422, {'X-DynDNS-Response' => 'not_found'}, []] if env["PATH_INFO"] != "/nic/update"
@@ -219,17 +228,10 @@ module Dyndnsd
       # configure daemon
       db = Database.new(config['db'])
       updater = Updater::CommandWithBindZone.new(config['domain'], config['updater']['params']) if config['updater']['name'] == 'command_with_bind_zone'
+      daemon = Daemon.new(config, db, updater)
 
       # configure rack
-      app = Daemon.new(config, db, updater)
-      app = Rack::Auth::Basic.new(app, "DynDNS") do |user,pass|
-        allow = ((config['users'].has_key? user) and (config['users'][user]['password'] == pass))
-        if not allow
-          Dyndnsd.logger.warn "Login failed for #{user}"
-          Metriks.meter('requests.auth_failed').mark
-        end
-        allow
-      end
+      app = Rack::Auth::Basic.new(daemon, "DynDNS", &daemon.method(:is_authorized?))
 
       if config['responder'] == 'RestStyle'
         app = Responder::RestStyle.new(app)

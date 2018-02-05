@@ -18,16 +18,21 @@ describe Dyndnsd::Daemon do
     }
     db = Dyndnsd::DummyDatabase.new({})
     updater = Dyndnsd::Updater::Dummy.new
-    app = Dyndnsd::Daemon.new(config, db, updater)
+    daemon = Dyndnsd::Daemon.new(config, db, updater)
 
-    app = Rack::Auth::Basic.new(app, "DynDNS") do |user,pass|
-      (config['users'].has_key? user) and (config['users'][user]['password'] == pass)
-    end
+    app = Rack::Auth::Basic.new(daemon, "DynDNS", &daemon.method(:is_authorized?))
 
     app = Dyndnsd::Responder::DynDNSStyle.new(app)
   end
 
   it 'requires authentication' do
+    get '/'
+    expect(last_response.status).to eq(401)
+    expect(last_response.body).to eq('badauth')
+  end
+
+  it 'requires configured correct credentials' do
+    authorize 'test', 'wrongsecret'
     get '/'
     expect(last_response.status).to eq(401)
     expect(last_response.body).to eq('badauth')
@@ -94,6 +99,7 @@ describe Dyndnsd::Daemon do
 
   it 'rejects request if user does not own one hostname' do
     authorize 'test', 'secret'
+
     get '/nic/update?hostname=notmyhost.example.org'
     expect(last_response).to be_ok
     expect(last_response.body).to eq('nohost')
