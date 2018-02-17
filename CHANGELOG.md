@@ -8,6 +8,7 @@ IMPROVEMENTS:
 - Better protocol compliance by returning `badauth` in response body on HTTP 401 errors
 - Better code maintainability by refactorings
 - Update dependencies, mainly `rack` to new major version 2
+- Add Ruby 2.5 support
 
 ## 1.6.1 (October 31, 2017)
 
