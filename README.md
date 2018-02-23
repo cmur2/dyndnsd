@@ -1,6 +1,6 @@
 # dyndnsd.rb
 
-[![Build Status](https://travis-ci.org/cmur2/dyndnsd.png)](https://travis-ci.org/cmur2/dyndnsd)
+[![Build Status](https://travis-ci.org/cmur2/dyndnsd.svg?branch=dyndnsd-2.x)](https://travis-ci.org/cmur2/dyndnsd) [![Dependencies](https://badges.depfu.com/badges/4f25da8493f7a29f652ac892fbf9227b/overview.svg)](https://depfu.com/github/cmur2/dyndnsd)
 
 A small, lightweight and extensible DynDNS server written with Ruby and Rack.
 
