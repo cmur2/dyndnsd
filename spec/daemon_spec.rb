@@ -20,9 +20,9 @@ describe Dyndnsd::Daemon do
     updater = Dyndnsd::Updater::Dummy.new
     daemon = Dyndnsd::Daemon.new(config, db, updater)
 
-    app = Rack::Auth::Basic.new(daemon, "DynDNS", &daemon.method(:is_authorized?))
+    app = Rack::Auth::Basic.new(daemon, 'DynDNS', &daemon.method(:authorized?))
 
-    app = Dyndnsd::Responder::DynDNSStyle.new(app)
+    Dyndnsd::Responder::DynDNSStyle.new(app)
   end
 
   it 'requires authentication' do
@@ -189,7 +189,7 @@ describe Dyndnsd::Daemon do
 
     get '/nic/update?hostname=foo.example.org&myip=1.2.3.4&myip6=2001:db8::1'
     expect(last_response).to be_ok
-    expect(last_response.body).to eq("good 1.2.3.4 2001:db8::1")
+    expect(last_response.body).to eq('good 1.2.3.4 2001:db8::1')
 
     get '/nic/update?hostname=foo.example.org&myip=BROKENIP&myip6=2001:db8::1'
     expect(last_response).to be_ok

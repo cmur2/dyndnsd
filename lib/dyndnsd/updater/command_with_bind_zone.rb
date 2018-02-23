@@ -7,7 +7,7 @@ module Dyndnsd
         @command = config['command']
         @generator = Generator::Bind.new(domain, config)
       end
-      
+
       def update(zone)
         # write zone file in bind syntax
         File.open(@zone_file, 'w') { |f| f.write(@generator.generate(zone)) }

@@ -4,7 +4,7 @@ require 'forwardable'
 module Dyndnsd
   class DummyDatabase
     extend Forwardable
-  
+
     def_delegators :@db, :[], :[]=, :each, :has_key?
 
     def initialize(db_init)
@@ -25,5 +25,3 @@ module Dyndnsd
     end
   end
 end
-
-      

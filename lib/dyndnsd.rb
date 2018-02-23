@@ -27,8 +27,8 @@ module Dyndnsd
   end
 
   class LogFormatter
-    def call(lvl, time, progname, msg)
-      "[%s] %-5s %s\n" % [Time.now.strftime('%Y-%m-%d %H:%M:%S'), lvl, msg.to_s]
+    def call(lvl, _time, _progname, msg)
+      format("[%s] %-5s %s\n", Time.now.strftime('%Y-%m-%d %H:%M:%S'), lvl, msg.to_s)
     end
   end
 
@@ -42,12 +42,15 @@ module Dyndnsd
       @db.load
       @db['serial'] ||= 1
       @db['hosts'] ||= {}
-      (@db.save; @updater.update(@db)) if @db.changed?
+      if @db.changed?
+        @db.save
+        @updater.update(@db)
+      end
     end
 
-    def is_authorized?(username, password)
-      allow = ((@users.has_key? username) and (@users[username]['password'] == password))
-      if not allow
+    def authorized?(username, password)
+      allow = ((@users.key? username) && (@users[username]['password'] == password))
+      if !allow
         Dyndnsd.logger.warn "Login failed for #{username}"
         Metriks.meter('requests.auth_failed').mark
       end
@@ -55,40 +58,40 @@ module Dyndnsd
     end
 
     def call(env)
-      return [422, {'X-DynDNS-Response' => 'method_forbidden'}, []] if env["REQUEST_METHOD"] != "GET"
-      return [422, {'X-DynDNS-Response' => 'not_found'}, []] if env["PATH_INFO"] != "/nic/update"
+      return [422, {'X-DynDNS-Response' => 'method_forbidden'}, []] if env['REQUEST_METHOD'] != 'GET'
+      return [422, {'X-DynDNS-Response' => 'not_found'}, []] if env['PATH_INFO'] != '/nic/update'
 
       handle_dyndns_request(env)
     end
 
     def self.run!
       if ARGV.length != 1
-        puts "Usage: dyndnsd config_file"
+        puts 'Usage: dyndnsd config_file'
         exit 1
       end
 
       config_file = ARGV[0]
 
-      if not File.file?(config_file)
-        puts "Config file not found!"
+      if !File.file?(config_file)
+        puts 'Config file not found!'
         exit 1
       end
 
       puts "DynDNSd version #{Dyndnsd::VERSION}"
       puts "Using config file #{config_file}"
 
-      config = YAML::load(File.open(config_file, 'r') { |f| f.read })
+      config = YAML.safe_load(File.open(config_file, 'r', &:read))
 
       setup_logger(config)
 
-      Dyndnsd.logger.info "Starting..."
+      Dyndnsd.logger.info 'Starting...'
 
       # drop priviliges as soon as possible
       # NOTE: first change group than user
       Process::Sys.setgid(Etc.getgrnam(config['group']).gid) if config['group']
       Process::Sys.setuid(Etc.getpwnam(config['user']).uid) if config['user']
 
-      setup_traps()
+      setup_traps
 
       setup_monitoring(config)
 
@@ -97,12 +100,12 @@ module Dyndnsd
 
     private
 
-    def extract_v4_and_v6_address(env, params)
-      return [] if not params["myip"]
+    def extract_v4_and_v6_address(params)
+      return [] if !(params['myip'])
       begin
-        IPAddr.new(params["myip"], Socket::AF_INET)
-        IPAddr.new(params["myip6"], Socket::AF_INET6)
-        [params["myip"], params["myip6"]]
+        IPAddr.new(params['myip'], Socket::AF_INET)
+        IPAddr.new(params['myip6'], Socket::AF_INET6)
+        [params['myip'], params['myip6']]
       rescue ArgumentError
         []
       end
@@ -110,23 +113,23 @@ module Dyndnsd
 
     def extract_myips(env, params)
       # require presence of myip parameter as valid IPAddr (v4) and valid myip6
-      return extract_v4_and_v6_address(env, params) if params.has_key?("myip6")
+      return extract_v4_and_v6_address(params) if params.key?('myip6')
 
       # check whether myip parameter has valid IPAddr
-      return [params["myip"]] if params.has_key?("myip") and Helper.is_ip_valid?(params["myip"])
+      return [params['myip']] if params.key?('myip') && Helper.ip_valid?(params['myip'])
 
       # check whether X-Real-IP header has valid IPAddr
-      return [env["HTTP_X_REAL_IP"]] if env.has_key?("HTTP_X_REAL_IP") and Helper.is_ip_valid?(env["HTTP_X_REAL_IP"])
+      return [env['HTTP_X_REAL_IP']] if env.key?('HTTP_X_REAL_IP') && Helper.ip_valid?(env['HTTP_X_REAL_IP'])
 
       # fallback value, always present
-      [env["REMOTE_ADDR"]]
+      [env['REMOTE_ADDR']]
     end
 
     def process_changes(hostnames, myips)
       changes = []
       hostnames.each do |hostname|
         # myips order is always deterministic
-        if (not @db['hosts'].include? hostname) or (@db['hosts'][hostname] != myips)
+        if (!@db['hosts'].include? hostname) || (@db['hosts'][hostname] != myips)
           @db['hosts'][hostname] = myips
           changes << :good
           Metriks.meter('requests.good').mark
@@ -138,7 +141,7 @@ module Dyndnsd
       changes
     end
 
-    def update_db()
+    def update_db
       @db['serial'] += 1
       Dyndnsd.logger.info "Committing update ##{@db['serial']}"
       @db.save
@@ -147,18 +150,18 @@ module Dyndnsd
     end
 
     def handle_dyndns_request(env)
-      params = Rack::Utils.parse_query(env["QUERY_STRING"])
+      params = Rack::Utils.parse_query(env['QUERY_STRING'])
 
       # require hostname parameter
-      return [422, {'X-DynDNS-Response' => 'hostname_missing'}, []] if not params["hostname"]
+      return [422, {'X-DynDNS-Response' => 'hostname_missing'}, []] if !(params['hostname'])
 
-      hostnames = params["hostname"].split(',')
+      hostnames = params['hostname'].split(',')
 
       # check for invalid hostnames
-      invalid_hostnames = hostnames.select { |hostname| not Helper.is_fqdn_valid?(hostname, @domain) }
+      invalid_hostnames = hostnames.select { |hostname| !Helper.fqdn_valid?(hostname, @domain) }
       return [422, {'X-DynDNS-Response' => 'hostname_malformed'}, []] if invalid_hostnames.any?
 
-      user = env["REMOTE_USER"]
+      user = env['REMOTE_USER']
 
       # check for hostnames that the user does not own
       forbidden_hostnames = hostnames - @users[user]['hosts']
@@ -181,29 +184,29 @@ module Dyndnsd
 
     # SETUP
 
-    def self.setup_logger(config)
+    private_class_method def self.setup_logger(config)
       if config['logfile']
         Dyndnsd.logger = Logger.new(config['logfile'])
       else
         Dyndnsd.logger = Logger.new(STDOUT)
       end
 
-      Dyndnsd.logger.progname = "dyndnsd"
+      Dyndnsd.logger.progname = 'dyndnsd'
       Dyndnsd.logger.formatter = LogFormatter.new
     end
 
-    def self.setup_traps()
+    private_class_method def self.setup_traps
       Signal.trap('INT') do
-        Dyndnsd.logger.info "Quitting..."
+        Dyndnsd.logger.info 'Quitting...'
         Rack::Handler::WEBrick.shutdown
       end
       Signal.trap('TERM') do
-        Dyndnsd.logger.info "Quitting..."
+        Dyndnsd.logger.info 'Quitting...'
         Rack::Handler::WEBrick.shutdown
       end
     end
 
-    def self.setup_monitoring(config)
+    private_class_method def self.setup_monitoring(config)
       # configure metriks
       if config['graphite']
         host = config['graphite']['host'] || 'localhost'
@@ -224,14 +227,14 @@ module Dyndnsd
       end
     end
 
-    def self.setup_rack(config)
+    private_class_method def self.setup_rack(config)
       # configure daemon
       db = Database.new(config['db'])
       updater = Updater::CommandWithBindZone.new(config['domain'], config['updater']['params']) if config['updater']['name'] == 'command_with_bind_zone'
       daemon = Daemon.new(config, db, updater)
 
       # configure rack
-      app = Rack::Auth::Basic.new(daemon, "DynDNS", &daemon.method(:is_authorized?))
+      app = Rack::Auth::Basic.new(daemon, 'DynDNS', &daemon.method(:authorized?))
 
       if config['responder'] == 'RestStyle'
         app = Responder::RestStyle.new(app)
@@ -239,7 +242,7 @@ module Dyndnsd
         app = Responder::DynDNSStyle.new(app)
       end
 
-      Rack::Handler::WEBrick.run app, :Host => config['host'], :Port => config['port']
+      Rack::Handler::WEBrick.run app, Host: config['host'], Port: config['port']
     end
   end
 end

@@ -8,7 +8,7 @@ module Dyndnsd
 
       def call(env)
         @app.call(env).tap do |status_code, headers, body|
-          if headers.has_key?("X-DynDNS-Response")
+          if headers.key?('X-DynDNS-Response')
             return decorate_dyndnsd_response(status_code, headers, body)
           else
             return decorate_other_response(status_code, headers, body)
@@ -20,17 +20,17 @@ module Dyndnsd
 
       def decorate_dyndnsd_response(status_code, headers, body)
         if status_code == 200
-          [200, {"Content-Type" => "text/plain"}, [get_success_body(body[0], body[1])]]
+          [200, {'Content-Type' => 'text/plain'}, [get_success_body(body[0], body[1])]]
         elsif status_code == 422
-          get_error_response_map[headers["X-DynDNS-Response"]]
+          error_response_map[headers['X-DynDNS-Response']]
         end
       end
 
-      def decorate_other_response(status_code, headers, body)
+      def decorate_other_response(status_code, headers, _body)
         if status_code == 400
-          [status_code, headers, ["Bad Request"]]
+          [status_code, headers, ['Bad Request']]
         elsif status_code == 401
-          [status_code, headers, ["Unauthorized"]]
+          [status_code, headers, ['Unauthorized']]
         end
       end
 
@@ -38,15 +38,15 @@ module Dyndnsd
         changes.map { |change| change == :good ? "Changed to #{myips.join(' ')}" : "No change needed for #{myips.join(' ')}" }.join("\n")
       end
 
-      def get_error_response_map
+      def error_response_map
         {
           # general http errors
-          'method_forbidden'   => [405, {"Content-Type" => "text/plain"}, ["Method Not Allowed"]],
-          'not_found'          => [404, {"Content-Type" => "text/plain"}, ["Not Found"]],
+          'method_forbidden'   => [405, {'Content-Type' => 'text/plain'}, ['Method Not Allowed']],
+          'not_found'          => [404, {'Content-Type' => 'text/plain'}, ['Not Found']],
           # specific errors
-          'hostname_missing'   => [422, {"Content-Type" => "text/plain"}, ["Hostname missing"]],
-          'hostname_malformed' => [422, {"Content-Type" => "text/plain"}, ["Hostname malformed"]],
-          'host_forbidden'     => [403, {"Content-Type" => "text/plain"}, ["Forbidden"]]
+          'hostname_missing'   => [422, {'Content-Type' => 'text/plain'}, ['Hostname missing']],
+          'hostname_malformed' => [422, {'Content-Type' => 'text/plain'}, ['Hostname malformed']],
+          'host_forbidden'     => [403, {'Content-Type' => 'text/plain'}, ['Forbidden']]
         }
       end
     end

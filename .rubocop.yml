@@ -6,8 +6,51 @@ AllCops:
 Gemspec/OrderedDependencies:
   Enabled: false
 
+# allows nicer usage of private_class_method
+Layout/EmptyLinesAroundArguments:
+  Enabled: false
+
+Layout/SpaceInsideHashLiteralBraces:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
 Metrics/LineLength:
   Max: 200
 
+Metrics/MethodLength:
+  Enabled: false
+
+Style/ConditionalAssignment:
+  Enabled: false
+
 Style/Documentation:
+  Enabled: false
+
+Style/FormatStringToken:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Style/IdenticalConditionalBranches:
+  Enabled: false
+
+Style/InverseMethods:
+  Enabled: false
+
+Style/NegatedIf:
+  Enabled: false
+
+Style/SymbolArray:
   Enabled: false
