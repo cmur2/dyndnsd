@@ -1,0 +1,13 @@
+inherit_from: .rubocop_todo.yml
+
+AllCops:
+  TargetRubyVersion: '2.3'
+
+Gemspec/OrderedDependencies:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 200
+
+Style/Documentation:
+  Enabled: false
