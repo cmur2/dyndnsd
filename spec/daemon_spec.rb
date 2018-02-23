@@ -167,6 +167,34 @@ describe Dyndnsd::Daemon do
     expect(last_response.body).to eq("nochg 2001:db8::1\ngood 2001:db8::1")
   end
 
+  it 'offlines a host' do
+    authorize 'test', 'secret'
+
+    get '/nic/update?hostname=foo.example.org&myip=1.2.3.4'
+    expect(last_response).to be_ok
+    expect(last_response.body).to eq('good 1.2.3.4')
+
+    get '/nic/update?hostname=foo.example.org&offline=YES'
+    expect(last_response).to be_ok
+    expect(last_response.body).to eq('good ')
+
+    get '/nic/update?hostname=foo.example.org&offline=YES'
+    expect(last_response).to be_ok
+    expect(last_response.body).to eq('nochg ')
+
+    get '/nic/update?hostname=foo.example.org&myip=1.2.3.4'
+    expect(last_response).to be_ok
+    expect(last_response.body).to eq('good 1.2.3.4')
+
+    get '/nic/update?hostname=foo.example.org&myip=1.2.3.4&offline=YES'
+    expect(last_response).to be_ok
+    expect(last_response.body).to eq('good ')
+
+    get '/nic/update?hostname=foo.example.org&myip=1.2.3.4&offline=YES'
+    expect(last_response).to be_ok
+    expect(last_response.body).to eq('nochg ')
+  end
+
   it 'uses clients remote IP address if myip not specified' do
     authorize 'test', 'secret'
     get '/nic/update?hostname=foo.example.org'

@@ -24,7 +24,7 @@ module Dyndnsd
 
     def self.changed?(hostname, myips, hosts)
       # myips order is always deterministic
-      (!hosts.include? hostname) || (hosts[hostname] != myips)
+      ((!hosts.include? hostname) || (hosts[hostname] != myips)) && !myips.empty?
     end
 
     def self.span(operation, &block)

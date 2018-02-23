@@ -141,7 +141,11 @@ module Dyndnsd
 
         hostnames.each do |hostname|
           # myips order is always deterministic
-          if Helper.changed?(hostname, myips, @db['hosts'])
+          if myips.empty? && @db['hosts'].include?(hostname)
+            @db['hosts'].delete(hostname)
+            changes << :good
+            Metriks.meter('requests.good').mark
+          elsif Helper.changed?(hostname, myips, @db['hosts'])
             @db['hosts'][hostname] = myips
             changes << :good
             Metriks.meter('requests.good').mark
@@ -180,10 +184,13 @@ module Dyndnsd
       forbidden_hostnames = hostnames - @users[user]['hosts']
       return [422, {'X-DynDNS-Response' => 'host_forbidden'}, []] if forbidden_hostnames.any?
 
-      myips = extract_myips(env, params)
-
-      # require at least one IP to update
-      return [422, {'X-DynDNS-Response' => 'host_forbidden'}, []] if myips.empty?
+      if params['offline'] == 'YES'
+        myips = []
+      else
+        myips = extract_myips(env, params)
+        # require at least one IP to update
+        return [422, {'X-DynDNS-Response' => 'host_forbidden'}, []] if myips.empty?
+      end
 
       Metriks.meter('requests.valid').mark
       Dyndnsd.logger.info "Request to update #{hostnames} to #{myips} for user #{user}"
