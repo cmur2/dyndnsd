@@ -1,6 +1,6 @@
 # dyndnsd.rb
 
-[![Build Status](https://travis-ci.org/cmur2/dyndnsd.svg?branch=dyndnsd-2.x)](https://travis-ci.org/cmur2/dyndnsd) [![Dependencies](https://badges.depfu.com/badges/4f25da8493f7a29f652ac892fbf9227b/overview.svg)](https://depfu.com/github/cmur2/dyndnsd)
+[![Build Status](https://travis-ci.org/cmur2/dyndnsd.svg?branch=master)](https://travis-ci.org/cmur2/dyndnsd) [![Dependencies](https://badges.depfu.com/badges/4f25da8493f7a29f652ac892fbf9227b/overview.svg)](https://depfu.com/github/cmur2/dyndnsd)
 
 A small, lightweight and extensible DynDNS server written with Ruby and Rack.
 
@@ -12,7 +12,7 @@ There is currently one updater shipped with dyndnsd.rb `command_with_bind_zone` 
 
 Because of the mechanisms used, dyndnsd.rb is known to work only on \*nix systems.
 
-See the [changelog](CHANGELOG.md) before upgrading.
+See the [changelog](CHANGELOG.md) before upgrading. The older version 1.x of dyndnsd.rb is still available on [branch dyndnsd-1.x](https://github.com/cmur2/dyndnsd/tree/dyndnsd-1.x).
 
 ## General Usage
 
