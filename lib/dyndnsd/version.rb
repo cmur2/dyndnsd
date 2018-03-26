@@ -1,4 +1,4 @@
 
 module Dyndnsd
-  VERSION = '1.6.1'.freeze
+  VERSION = '2.0.0.rc1'.freeze
 end
