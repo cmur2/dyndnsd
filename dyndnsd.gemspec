@@ -1,5 +1,5 @@
 
-$LOAD_PATH.push File.expand_path('../lib', __FILE__)
+$LOAD_PATH.push File.expand_path('lib', __dir__)
 
 require 'dyndnsd/version'
 
@@ -32,5 +32,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'rack-test'
-  s.add_development_dependency 'rubocop', '~> 0.52.1'
+  s.add_development_dependency 'rubocop', '~> 0.54.0'
 end

@@ -13,9 +13,9 @@ module Dyndnsd
 
     def self.ip_valid?(ip)
       IPAddr.new(ip)
-      return true
+      true
     rescue ArgumentError
-      return false
+      false
     end
 
     def self.user_allowed?(username, password, users)
