@@ -23,8 +23,8 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'rack', '~> 2.0'
   s.add_runtime_dependency 'json'
   s.add_runtime_dependency 'metriks'
-  s.add_runtime_dependency 'opentracing', '~> 0.3.0'
-  s.add_runtime_dependency 'rack-tracer', '~> 0.4.0'
+  s.add_runtime_dependency 'opentracing', '~> 0.4.0'
+  s.add_runtime_dependency 'rack-tracer', '~> 0.5.0'
   s.add_runtime_dependency 'spanmanager', '~> 0.3.0'
   s.add_runtime_dependency 'jaeger-client', '~> 0.4.0'
 
