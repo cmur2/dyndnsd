@@ -18,6 +18,7 @@ require 'dyndnsd/responder/dyndns_style'
 require 'dyndnsd/responder/rest_style'
 require 'dyndnsd/database'
 require 'dyndnsd/helper'
+require 'dyndnsd/textfile_reporter'
 require 'dyndnsd/version'
 
 module Dyndnsd
@@ -234,6 +235,12 @@ module Dyndnsd
         options = {}
         options[:prefix] = config['graphite']['prefix'] if config['graphite']['prefix']
         reporter = Metriks::Reporter::Graphite.new(host, port, options)
+        reporter.start
+      elsif config['textfile']
+        file = config['textfile']['file'] || '/tmp/dyndnsd-metrics.prom'
+        options = {}
+        options[:prefix] = config['textfile']['prefix'] if config['textfile']['prefix']
+        reporter = Dyndnsd::TextfileReporter.new(file, options)
         reporter.start
       else
         reporter = Metriks::Reporter::ProcTitle.new

@@ -135,7 +135,7 @@ The [Debian 6 init.d script](init.d/debian-6-dyndnsd) assumes that dyndnsd.rb is
 
 ### Monitoring
 
-For monitoring dyndnsd.rb uses the [metriks](https://github.com/eric/metriks) framework and exposes several metrics like the number of unauthenticated requests, requests that did (not) update a hostname, etc. By default the most important metrics are shown in the [proctitle](https://github.com/eric/metriks#proc-title-reporter) but you can also configure a [Graphite](https://graphiteapp.org/) backend for central monitoring.
+For monitoring dyndnsd.rb uses the [metriks](https://github.com/eric/metriks) framework and exposes several metrics like the number of unauthenticated requests, requests that did (not) update a hostname, etc. By default the most important metrics are shown in the [proctitle](https://github.com/eric/metriks#proc-title-reporter) but you can also configure a [Graphite](https://graphiteapp.org/) backend for central monitoring or the [textfile_reporter](https://github.com/prometheus/node_exporter/#textfile-collector) which outputs Graphite-style metrics that are also compatible with Prometheus to a file.
 
 ```yaml
 host: "0.0.0.0"
@@ -146,6 +146,10 @@ domain: "dyn.example.org"
 graphite:
   host: localhost # defaults for host and port of a carbon server
   port: 2003
+  prefix: "my.graphite.metrics.naming.structure.dyndnsd"
+# OR configure the textfile reporter instead of Graphite/proctitle
+textfile:
+  file: /path/to/file.prom
   prefix: "my.graphite.metrics.naming.structure.dyndnsd"
 # configure the updater, here we use command_with_bind_zone, params are updater-specific
 updater:

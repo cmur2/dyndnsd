@@ -37,6 +37,9 @@ Metrics/PerceivedComplexity:
 Naming/UncommunicativeMethodParamName:
   Enabled: false
 
+Naming/MemoizedInstanceVariableName:
+  Enabled: false
+
 Style/ConditionalAssignment:
   Enabled: false
 
@@ -59,6 +62,9 @@ Style/InverseMethods:
   Enabled: false
 
 Style/NegatedIf:
+  Enabled: false
+
+Style/RescueModifier:
   Enabled: false
 
 Style/SymbolArray:

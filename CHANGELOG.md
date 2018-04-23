@@ -11,6 +11,7 @@ IMPROVEMENTS:
 - Add Ruby 2.5 support
 - Add experimental [OpenTracing](http://opentracing.io/) support with [CNCF Jaeger](https://github.com/jaegertracing/jaeger)
 - Support host offlining by deleting the associated DNS records
+- Add textfile reporter to write Graphite-style metrics (also compatible with [Prometheus](https://prometheus.io/)) into a file
 
 ## 1.6.1 (October 31, 2017)
 
