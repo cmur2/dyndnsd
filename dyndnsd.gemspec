@@ -32,5 +32,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'rack-test'
-  s.add_development_dependency 'rubocop', '~> 0.56.0'
+  s.add_development_dependency 'rubocop', '~> 0.57.0'
 end
