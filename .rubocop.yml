@@ -10,6 +10,9 @@ Gemspec/OrderedDependencies:
 Layout/EmptyLinesAroundArguments:
   Enabled: false
 
+Layout/LeadingBlankLines:
+  Enabled: false
+
 Layout/SpaceInsideHashLiteralBraces:
   Enabled: false
 
