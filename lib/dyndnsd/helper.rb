@@ -28,13 +28,14 @@ module Dyndnsd
     end
 
     def self.span(operation, &block)
-      span = OpenTracing.start_span(operation)
+      scope = OpenTracing.start_active_span(operation)
+      span = scope.span
       span.set_tag('component', 'dyndnsd')
       span.set_tag('span.kind', 'server')
       begin
         block.call(span)
       ensure
-        span.finish
+        scope.close
       end
     end
   end
