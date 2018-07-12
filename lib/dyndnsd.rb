@@ -10,7 +10,6 @@ require 'metriks'
 require 'metriks/reporter/graphite'
 require 'opentracing'
 require 'rack/tracer'
-require 'spanmanager'
 
 require 'dyndnsd/generator/bind'
 require 'dyndnsd/updater/command_with_bind_zone'
@@ -266,8 +265,6 @@ module Dyndnsd
           host: host, port: port, service_name: service_name, flush_interval: 1
         )
       end
-      # always use SpanManager
-      OpenTracing.global_tracer = SpanManager::Tracer.new(OpenTracing.global_tracer)
     end
 
     private_class_method def self.setup_rack(config)
