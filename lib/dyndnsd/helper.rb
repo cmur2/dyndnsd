@@ -34,6 +34,16 @@ module Dyndnsd
       span.set_tag('span.kind', 'server')
       begin
         block.call(span)
+      rescue StandardError => e
+        span.set_tag('error', true)
+        span.log_kv(
+          event: 'error',
+          'error.kind': e.class.to_s,
+          'error.object': e,
+          message: e.message,
+          stack: e.backtrace.join("\n")
+        )
+        raise
       ensure
         scope.close
       end
