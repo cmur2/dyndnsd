@@ -6,6 +6,9 @@ AllCops:
 Gemspec/OrderedDependencies:
   Enabled: false
 
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
+
 # allows nicer usage of private_class_method
 Layout/EmptyLinesAroundArguments:
   Enabled: false
