@@ -6,6 +6,9 @@ AllCops:
 Gemspec/OrderedDependencies:
   Enabled: false
 
+Layout/AlignHash:
+  Enabled: false
+
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
 
