@@ -5,3 +5,7 @@ rvm:
   - 2.5
   - 2.4
   - 2.3
+
+before_install:
+  - gem uninstall -x -i /home/travis/.rvm/gems/ruby-2.3.7@global bundler || true
+  - gem install bundler -v '< 2'
