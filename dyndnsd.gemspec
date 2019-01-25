@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'rack-tracer', '~> 0.8.0'
   s.add_runtime_dependency 'jaeger-client', '~> 0.10.0'
 
-  s.add_development_dependency 'bundler', '< 2'
+  s.add_development_dependency 'bundler'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'rack-test'
