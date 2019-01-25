@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.0
+## 2.0.0 (January 25, 2019)
 
 IMPROVEMENTS:
 
