@@ -31,6 +31,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'rack-test'
-  s.add_development_dependency 'rubocop', '~> 0.76.0'
+  s.add_development_dependency 'rubocop', '~> 0.77.0'
   s.add_development_dependency 'bundler-audit'
 end
