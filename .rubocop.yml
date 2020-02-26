@@ -1,5 +1,3 @@
-inherit_from: .rubocop_todo.yml
-
 AllCops:
   TargetRubyVersion: '2.3'
 
@@ -19,6 +17,9 @@ Layout/HashAlignment:
 Layout/LeadingEmptyLines:
   Enabled: false
 
+Layout/LineLength:
+  Max: 200
+
 Layout/SpaceInsideHashLiteralBraces:
   Enabled: false
 
@@ -33,9 +34,6 @@ Metrics/ClassLength:
 
 Metrics/CyclomaticComplexity:
   Enabled: false
-
-Metrics/LineLength:
-  Max: 200
 
 Metrics/MethodLength:
   Enabled: false
@@ -63,6 +61,15 @@ Style/FrozenStringLiteralComment:
 
 Style/GuardClause:
   Enabled: false
+
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
 
 Style/IdenticalConditionalBranches:
   Enabled: false
