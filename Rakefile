@@ -7,4 +7,8 @@ RSpec::Core::RakeTask.new(:spec)
 RuboCop::RakeTask.new
 Bundler::Audit::Task.new
 
-task default: [:rubocop, :spec, 'bundle:audit']
+task :sorbet do
+  sh 'srb typecheck'
+end
+
+task default: [:rubocop, :sorbet, :spec, 'bundle:audit']

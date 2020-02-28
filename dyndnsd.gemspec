@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'opentracing', '~> 0.5.0'
   s.add_runtime_dependency 'rack-tracer', '~> 0.9.0'
   s.add_runtime_dependency 'jaeger-client', '~> 0.10.0'
+  s.add_runtime_dependency 'sorbet-runtime', '~> 0.5.0'
 
   s.add_development_dependency 'bundler'
   s.add_development_dependency 'rake'
@@ -33,4 +34,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rack-test'
   s.add_development_dependency 'rubocop', '~> 0.80.0'
   s.add_development_dependency 'bundler-audit', '~> 0.6.0'
+  s.add_development_dependency 'sorbet', '~> 0.5.0'
 end

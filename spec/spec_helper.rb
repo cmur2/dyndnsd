@@ -1,3 +1,4 @@
+# typed: strong
 
 require 'rubygems'
 require 'bundler/setup'

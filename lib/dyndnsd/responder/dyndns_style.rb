@@ -1,3 +1,4 @@
+# typed: true
 
 module Dyndnsd
   module Responder

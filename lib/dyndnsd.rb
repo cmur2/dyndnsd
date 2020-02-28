@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# typed: true
 
 require 'etc'
 require 'logger'
