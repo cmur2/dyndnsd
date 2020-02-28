@@ -15,7 +15,7 @@ module Dyndnsd
     # @return [void]
     def load
       if File.file?(@db_file)
-        @db = JSON.parse(File.open(@db_file, 'r', &:read))
+        @db = JSON.parse(File.read(@db_file, mode: 'r'))
       else
         @db = {}
       end

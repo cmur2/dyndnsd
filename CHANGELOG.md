@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.1
+
+IMPROVEMENTS:
+
+- Fix potential `nil` cases detected by [Sorbet](https://sorbet.org) including refactorings
+
 ## 2.1.0 (March 1, 2020)
 
 IMPROVEMENTS:

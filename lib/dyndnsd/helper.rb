@@ -57,7 +57,7 @@ module Dyndnsd
           'error.kind': e.class.to_s,
           'error.object': e,
           message: e.message,
-          stack: e.backtrace.join("\n")
+          stack: e.backtrace&.join("\n") || ''
         )
         raise
       ensure
