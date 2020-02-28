@@ -113,8 +113,14 @@ module Dyndnsd
 
       # drop priviliges as soon as possible
       # NOTE: first change group than user
-      Process::Sys.setgid(Etc.getgrnam(config['group']).gid) if config['group']
-      Process::Sys.setuid(Etc.getpwnam(config['user']).uid) if config['user']
+      if config['group']
+        group = Etc.getgrnam(config['group'])
+        Process::Sys.setgid(group.gid) if group
+      end
+      if config['user']
+        user = Etc.getpwnam(config['user'])
+        Process::Sys.setuid(user.uid) if user
+      end
 
       setup_traps
 
