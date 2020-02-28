@@ -11,4 +11,8 @@ task :solargraph do
   sh 'solargraph typecheck'
 end
 
-task default: [:rubocop, :spec, 'bundle:audit']
+task :sorbet do
+  sh 'srb typecheck'
+end
+
+task default: [:rubocop, :sorbet, :spec, 'bundle:audit']

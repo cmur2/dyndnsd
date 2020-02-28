@@ -1,3 +1,4 @@
+# typed: true
 
 # Adapted from https://github.com/eric/metriks-graphite/blob/master/lib/metriks/reporter/graphite.rb
 

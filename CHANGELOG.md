@@ -5,6 +5,7 @@
 IMPROVEMENTS:
 
 - Add Ruby 2.7 support
+- Add experimental [Sorbet](https://sorbet.org) support to development tools, fix surfaced problems
 
 ## 2.0.0 (January 25, 2019)
 

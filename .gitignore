@@ -2,3 +2,4 @@
 *.lock
 pkg/*
 .yardoc
+sorbet/rbi/hidden-definitions/errors.txt
