@@ -7,4 +7,8 @@ RSpec::Core::RakeTask.new(:spec)
 RuboCop::RakeTask.new
 Bundler::Audit::Task.new
 
+task :solargraph do
+  sh 'solargraph typecheck'
+end
+
 task default: [:rubocop, :spec, 'bundle:audit']

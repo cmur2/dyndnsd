@@ -5,8 +5,11 @@ require 'metriks'
 
 module Dyndnsd
   class TextfileReporter
+    # @return [String]
     attr_reader :file
 
+    # @param file [String]
+    # @param options [Hash{Symbol => Object}]
     def initialize(file, options = {})
       @file = file
 
@@ -17,6 +20,7 @@ module Dyndnsd
       @on_error  = options[:on_error] || proc { |ex| }
     end
 
+    # @return [void]
     def start
       @thread ||= Thread.new do
         loop do
@@ -33,16 +37,19 @@ module Dyndnsd
       end
     end
 
+    # @return [void]
     def stop
       @thread&.kill
       @thread = nil
     end
 
+    # @return [void]
     def restart
       stop
       start
     end
 
+    # @return [void]
     def write
       File.open(@file, 'w') do |f|
         @registry.each do |name, metric|
@@ -85,6 +92,12 @@ module Dyndnsd
       end
     end
 
+    # @param file [String]
+    # @param base_name [String]
+    # @param metric [Object]
+    # @param keys [Array{Symbol}]
+    # @param snapshot_keys [Array{Symbol}]
+    # @return [void]
     def write_metric(file, base_name, metric, keys, snapshot_keys = [])
       time = Time.now.to_i
 
