@@ -8,12 +8,12 @@ module Dyndnsd
         @generator = Generator::Bind.new(domain, config)
       end
 
-      def update(zone)
+      def update(db)
         Helper.span('updater_update') do |span|
           span.set_tag('dyndnsd.updater.name', self.class.name.split('::').last)
 
           # write zone file in bind syntax
-          File.open(@zone_file, 'w') { |f| f.write(@generator.generate(zone)) }
+          File.open(@zone_file, 'w') { |f| f.write(@generator.generate(db)) }
           # call user-defined command
           pid = fork do
             exec @command
