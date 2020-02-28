@@ -33,4 +33,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rack-test'
   s.add_development_dependency 'rubocop', '~> 0.80.0'
   s.add_development_dependency 'bundler-audit', '~> 0.6.0'
+  s.add_development_dependency 'solargraph'
 end

@@ -21,21 +21,32 @@ require 'dyndnsd/textfile_reporter'
 require 'dyndnsd/version'
 
 module Dyndnsd
+  # @return [Logger]
   def self.logger
     @logger
   end
 
+  # @param logger [Logger]
+  # @return [Logger]
   def self.logger=(logger)
     @logger = logger
   end
 
   class LogFormatter
+    # @param lvl [Object]
+    # @param _time [DateTime]
+    # @param _progname [String]
+    # @param msg [Object]
+    # @return [String]
     def call(lvl, _time, _progname, msg)
       format("[%s] %-5s %s\n", Time.now.strftime('%Y-%m-%d %H:%M:%S'), lvl, msg.to_s)
     end
   end
 
   class Daemon
+    # @param config [Hash{String => Object}]
+    # @param db [Dyndnsd::Database]
+    # @param updater [#update]
     def initialize(config, db, updater)
       @users = config['users']
       @domain = config['domain']
@@ -51,6 +62,9 @@ module Dyndnsd
       end
     end
 
+    # @param username [String]
+    # @param password [String]
+    # @return [Boolean]
     def authorized?(username, password)
       Helper.span('check_authorized') do |span|
         span.set_tag('dyndnsd.user', username)
@@ -64,6 +78,8 @@ module Dyndnsd
       end
     end
 
+    # @param env [Hash{String => String}]
+    # @return [Array{Integer,Hash{String => String},Array{String}}]
     def call(env)
       return [422, {'X-DynDNS-Response' => 'method_forbidden'}, []] if env['REQUEST_METHOD'] != 'GET'
       return [422, {'X-DynDNS-Response' => 'not_found'}, []] if env['PATH_INFO'] != '/nic/update'
@@ -71,6 +87,7 @@ module Dyndnsd
       handle_dyndns_request(env)
     end
 
+    # @return [void]
     def self.run!
       if ARGV.length != 1
         puts 'Usage: dyndnsd config_file'
@@ -109,6 +126,8 @@ module Dyndnsd
 
     private
 
+    # @param params [Hash{String => String}]
+    # @return [Array{String}]
     def extract_v4_and_v6_address(params)
       return [] if !(params['myip'])
       begin
@@ -120,6 +139,9 @@ module Dyndnsd
       end
     end
 
+    # @param env [Hash{String => String}]
+    # @param params [Hash{String => String}]
+    # @return [Array{String}]
     def extract_myips(env, params)
       # require presence of myip parameter as valid IPAddr (v4) and valid myip6
       return extract_v4_and_v6_address(params) if params.key?('myip6')
@@ -134,6 +156,9 @@ module Dyndnsd
       [env['REMOTE_ADDR']]
     end
 
+    # @param hostnames [String]
+    # @param myips [Array{String}]
+    # @return [Array{Symbol}]
     def process_changes(hostnames, myips)
       changes = []
       Helper.span('process_changes') do |span|
@@ -158,6 +183,7 @@ module Dyndnsd
       changes
     end
 
+    # @return [void]
     def update_db
       @db['serial'] += 1
       Dyndnsd.logger.info "Committing update ##{@db['serial']}"
@@ -166,6 +192,8 @@ module Dyndnsd
       Metriks.meter('updates.committed').mark
     end
 
+    # @param env [Hash{String => String}]
+    # @return [Array{Integer,Hash{String => String},Array{String}}]
     def handle_dyndns_request(env)
       params = Rack::Utils.parse_query(env['QUERY_STRING'])
 
@@ -204,6 +232,8 @@ module Dyndnsd
 
     # SETUP
 
+    # @param config [Hash{String => Object}]
+    # @return [void]
     private_class_method def self.setup_logger(config)
       if config['logfile']
         Dyndnsd.logger = Logger.new(config['logfile'])
@@ -215,6 +245,7 @@ module Dyndnsd
       Dyndnsd.logger.formatter = LogFormatter.new
     end
 
+    # @return [void]
     private_class_method def self.setup_traps
       Signal.trap('INT') do
         Dyndnsd.logger.info 'Quitting...'
@@ -226,6 +257,8 @@ module Dyndnsd
       end
     end
 
+    # @param config [Hash{String => Object}]
+    # @return [void]
     private_class_method def self.setup_monitoring(config)
       # configure metriks
       if config['graphite']
@@ -253,6 +286,8 @@ module Dyndnsd
       end
     end
 
+    # @param config [Hash{String => Object}]
+    # @return [void]
     private_class_method def self.setup_tracing(config)
       # configure OpenTracing
       if config.dig('tracing', 'jaeger')
@@ -267,10 +302,12 @@ module Dyndnsd
       end
     end
 
+    # @param config [Hash{String => Object}]
+    # @return [void]
     private_class_method def self.setup_rack(config)
       # configure daemon
       db = Database.new(config['db'])
-      updater = Updater::CommandWithBindZone.new(config['domain'], config['updater']['params']) if config['updater']['name'] == 'command_with_bind_zone'
+      updater = Updater::CommandWithBindZone.new(config['domain'], config.dig('updater', 'params')) if config.dig('updater', 'name') == 'command_with_bind_zone'
       daemon = Daemon.new(config, db, updater)
 
       # configure rack

@@ -2,6 +2,8 @@
 module Dyndnsd
   module Generator
     class Bind
+      # @param domain [String]
+      # @param config [Hash{String => Object}]
       def initialize(domain, config)
         @domain = domain
         @ttl = config['ttl']
@@ -10,6 +12,8 @@ module Dyndnsd
         @additional_zone_content = config['additional_zone_content']
       end
 
+      # @param db [Dyndnsd::Database]
+      # @return [String]
       def generate(db)
         out = []
         out << "$TTL #{@ttl}"

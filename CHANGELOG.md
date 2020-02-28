@@ -5,6 +5,8 @@
 IMPROVEMENTS:
 
 - Add Ruby 2.7 support
+- Add [solargraph](https://github.com/castwide/solargraph) to dev tooling as Ruby Language Server usable e.g. for IDEs (used solargraph version not compatible with Ruby 2.7 as bundler-audit 0.6.x requires old `thor` gem)
+- Document code using YARD tags, e.g. for type information and better code completion
 
 ## 2.0.0 (January 25, 2019)
 
@@ -15,7 +17,7 @@ IMPROVEMENTS:
 - Better code maintainability by refactorings
 - Update dependencies, mainly `rack` to new major version 2
 - Add Ruby 2.5 and Ruby 2.6 support
-- Add experimental [OpenTracing](http://opentracing.io/) support with [CNCF Jaeger](https://github.com/jaegertracing/jaeger)
+- Add experimental [OpenTracing](https://opentracing.io/) support with [CNCF Jaeger](https://github.com/jaegertracing/jaeger)
 - Support host offlining by deleting the associated DNS records
 - Add textfile reporter to write Graphite-style metrics (also compatible with [Prometheus](https://prometheus.io/)) into a file
 
