@@ -11,7 +11,7 @@ module Dyndnsd
 
       def update(db)
         Helper.span('updater_update') do |span|
-          span.set_tag('dyndnsd.updater.name', self.class.name.split('::').last)
+          span.set_tag('dyndnsd.updater.name', self.class.name&.split('::')&.last || 'None')
 
           # write zone file in bind syntax
           File.open(@zone_file, 'w') { |f| f.write(@generator.generate(db)) }
@@ -21,7 +21,7 @@ module Dyndnsd
           end
 
           # detach so children don't become zombies
-          Process.detach(pid)
+          Process.detach(pid) if pid
         end
       end
     end
