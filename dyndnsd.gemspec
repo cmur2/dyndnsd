@@ -36,4 +36,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'bundler-audit', '~> 0.6.0'
   s.add_development_dependency 'solargraph'
   s.add_development_dependency 'sorbet', '~> 0.5.0'
+  s.add_development_dependency 'sord'
 end

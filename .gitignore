@@ -1,5 +1,6 @@
 .DS_Store
 *.lock
+doc/*
 pkg/*
 .yardoc
 sorbet/rbi/hidden-definitions/errors.txt
