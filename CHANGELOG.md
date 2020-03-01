@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.1.1
+## 2.1.1 (March 1, 2020)
 
 IMPROVEMENTS:
 
