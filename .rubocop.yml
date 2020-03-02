@@ -1,9 +1,6 @@
 AllCops:
   TargetRubyVersion: '2.3'
 
-Gemspec/OrderedDependencies:
-  Enabled: false
-
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
 

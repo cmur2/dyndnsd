@@ -20,18 +20,17 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.3'
 
-  s.add_runtime_dependency 'rack', '~> 2.0'
-  s.add_runtime_dependency 'json'
+  s.add_runtime_dependency 'jaeger-client', '~> 0.10.0'
   s.add_runtime_dependency 'metriks'
   s.add_runtime_dependency 'opentracing', '~> 0.5.0'
+  s.add_runtime_dependency 'rack', '~> 2.0'
   s.add_runtime_dependency 'rack-tracer', '~> 0.9.0'
-  s.add_runtime_dependency 'jaeger-client', '~> 0.10.0'
 
   s.add_development_dependency 'bundler'
+  s.add_development_dependency 'bundler-audit', '~> 0.6.0'
+  s.add_development_dependency 'rack-test'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec'
-  s.add_development_dependency 'rack-test'
   s.add_development_dependency 'rubocop', '~> 0.80.0'
-  s.add_development_dependency 'bundler-audit', '~> 0.6.0'
   s.add_development_dependency 'solargraph'
 end
