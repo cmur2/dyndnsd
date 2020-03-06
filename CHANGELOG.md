@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.0
+
+IMPROVEMENTS:
+
+- Refactor gemspec based on [recommendations](https://piotrmurach.com/articles/writing-a-ruby-gem-specification/) so tests are now excluded from gem and binaries move to `./exe` directory
+
 ## 2.1.1 (March 1, 2020)
 
 IMPROVEMENTS:

@@ -1,7 +1,5 @@
 
-$LOAD_PATH.push File.expand_path('lib', __dir__)
-
-require 'dyndnsd/version'
+require_relative 'lib/dyndnsd/version'
 
 Gem::Specification.new do |s|
   s.name = 'dyndnsd'
@@ -9,14 +7,22 @@ Gem::Specification.new do |s|
   s.summary = 'dyndnsd.rb'
   s.description = 'A small, lightweight and extensible DynDNS server written with Ruby and Rack.'
   s.author = 'Christian Nicolai'
-  s.email = 'chrnicolai@gmail.com'
+
   s.homepage = 'https://github.com/cmur2/dyndnsd'
   s.license = 'Apache-2.0'
+  s.metadata = {
+    'bug_tracker_uri' => "#{s.homepage}/issues",
+    'changelog_uri' => "#{s.homepage}/blob/master/CHANGELOG.md",
+    'source_code_uri' => s.homepage
+  }
 
-  s.files = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
-  s.test_files = s.files.grep(%r{^(test|spec|features)/})
+  s.files = `git ls-files -z`.split("\x0").select do |f|
+    f.match(%r{^(init.d|lib)/})
+  end
   s.require_paths = ['lib']
+  s.bindir = 'exe'
   s.executables = ['dyndnsd']
+  s.extra_rdoc_files = Dir['README.md', 'CHANGELOG.md', 'LICENSE']
 
   s.required_ruby_version = '>= 2.3'
 
