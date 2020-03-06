@@ -1,4 +1,6 @@
-require 'spec_helper'
+# frozen_string_literal: true
+
+require_relative 'spec_helper'
 
 describe Dyndnsd::Daemon do
   include Rack::Test::Methods

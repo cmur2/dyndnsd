@@ -5,6 +5,7 @@
 IMPROVEMENTS:
 
 - Refactor gemspec based on [recommendations](https://piotrmurach.com/articles/writing-a-ruby-gem-specification/) so tests are now excluded from gem and binaries move to `./exe` directory
+- Adopt Ruby 2.3 frozen string literals for source code potentially reducing memory consumption
 
 ## 2.1.1 (March 1, 2020)
 
