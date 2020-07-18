@@ -4,15 +4,19 @@
 
 A small, lightweight and extensible DynDNS server written with Ruby and Rack.
 
+
 ## Description
 
 dyndnsd.rb aims to implement a small [DynDNS-compliant](https://help.dyn.com/remote-access-api/) server in Ruby supporting IPv4 and IPv6 addresses. It has an integrated user and hostname database in its configuration file that is used for authentication and authorization. Besides talking the DynDNS protocol it is able to invoke a so-called *updater*, a small Ruby module that takes care of supplying the current hostname => ip mapping to a DNS server.
 
-There is currently one updater shipped with dyndnsd.rb `command_with_bind_zone` that writes out a zone file in BIND syntax onto the current system and invokes a user-supplied command afterwards that is assumed to trigger the DNS server (not necessarily BIND since its zone files are read by other DNS servers, too) to reload its zone configuration.
+There are currently two updaters shipped with dyndnsd.rb:
+- `zone_transfer_server` that uses [DNS zone transfers via AXFR (RFC5936)](https://tools.ietf.org/html/rfc5936) to allow any secondary nameserver(s) to fetch the zone contents after (optionally) receiving a [DNS NOTIFY (RFC1996)](https://tools.ietf.org/html/rfc1996) request
+- `command_with_bind_zone` that writes out a zone file in BIND syntax onto the current system and invokes a user-supplied command afterwards that is assumed to trigger the DNS server (not necessarily BIND since its zone files are read by other DNS servers, too) to reload its zone configuration
 
 Because of the mechanisms used, dyndnsd.rb is known to work only on \*nix systems.
 
 See the [changelog](CHANGELOG.md) before upgrading. The older version 1.x of dyndnsd.rb is still available on [branch dyndnsd-1.x](https://github.com/cmur2/dyndnsd/tree/dyndnsd-1.x).
+
 
 ## General Usage
 
@@ -62,11 +66,57 @@ Run dyndnsd.rb by:
 
 	dyndnsd /path/to/config.yaml
 
-## Using dyndnsd.rb with [NSD](https://www.nlnetlabs.nl/nsd/)
 
-NSD is a nice, open source, authoritative-only, low-memory DNS server that reads BIND-style zone files (and converts them into its own database) and has a simple config file.
+## Using dyndnsd.rb with any nameserver via DNS zone transfers (AXFR)
 
-A feature NSD is lacking is the [Dynamic DNS update](https://tools.ietf.org/html/rfc2136) functionality BIND offers but one can fake it using the following dyndnsd.rb config:
+By using [DNS zone transfers via AXFR (RFC5936)](https://tools.ietf.org/html/rfc5936) any secondary nameserver can retrieve the DNS zone contents from dyndnsd.rb and serve them to clients.
+To speedup propagation after changes dyndnsd.rb can issue a [DNS NOTIFY (RFC1996)](https://tools.ietf.org/html/rfc1996) to inform the nameserver that the DNS zone contents changed and should be fetched even before the time indicated in the SOA record is up.
+Currently dyndnsd.rb does not support any authentication for incoming DNS zone transfer requests so it should be isolated from the internet on these ports.
+
+This approach has several advantages:
+- dyndnsd.rb can be used in *hidden primary* fashion isolated from client's DNS traffic and does not need to implement full nameserver features
+- any existing, production-grade, caching, geo-replicated nameserver setup can be used to pull DNS zone contents from the *hidden primary* dyndnsd.rb and serve it to clients
+- any nameserver(s) and dyndnsd.rb do not need to be located on the same host
+
+Example dyndnsd.rb configuration:
+
+```yaml
+host: "0.0.0.0"
+port: 8245 # the DynDNS.com alternative HTTP port
+db: "/opt/dyndnsd/db.json"
+domain: "dyn.example.org"
+updater:
+  name: "zone_transfer_server"
+  params:
+    # endpoint(s) to listen for incoming zone transfer (AXFR) requests, default 0.0.0.0@53
+    server_listens:
+    - 127.0.0.1@5300
+    # where to send DNS NOTIFY request(s) to on zone content change
+    send_notifies:
+    - '127.0.0.1'
+    # TTL for all records in the zone (in seconds)
+    zone_ttl: 300  # 5m
+    # zone's NS record(s) (at least one)
+    zone_nameservers:
+    - "dns.example.org."
+    # info for zone's SOA record
+    zone_email_address: "admin.example.org."
+    # zone's additional A/AAAA records
+    zone_additional_ips:
+    - "127.0.0.1"
+users:
+  foo:
+    password: "secret"
+    hosts:
+      - foo.example.org
+```
+
+
+## Using dyndnsd.rb with [NSD](https://www.nlnetlabs.nl/projects/nsd/about/)
+
+NSD is a nice, open source, authoritative-only, low-memory DNS server that reads BIND-style zone files (and converts them into its own database) and has a simple configuration file.
+
+A feature NSD is lacking is the [Dynamic DNS update (RFC2136)](https://tools.ietf.org/html/rfc2136) functionality BIND offers but one can fake it using the following dyndnsd.rb configuration:
 
 ```yaml
 host: "0.0.0.0"
@@ -95,11 +145,14 @@ users:
 
 Start dyndnsd.rb before NSD to make sure the zone file exists else NSD complains.
 
+
 ## Using dyndnsd.rb with X
 
 Please provide ideas if you are using dyndnsd.rb with other DNS servers :)
 
+
 ## Advanced topics
+
 
 ### Update URL
 
@@ -117,6 +170,7 @@ where:
 * MYIP is optional and the HTTP client's IP address will be used if missing
 * MYIP6 is optional but if present also requires presence of MYIP
 
+
 ### IP address determination
 
 The following rules apply:
@@ -127,13 +181,16 @@ The following rules apply:
 
 If you want to provide an additional IPv6 address as myip6 parameter, the myip parameter containing an IPv4 address has to be present, too! No automatism is applied then.
 
+
 ### SSL, multiple listen ports
 
 Use a webserver as a proxy to handle SSL and/or multiple listen addresses and ports. DynDNS.com provides HTTP on port 80 and 8245 and HTTPS on port 443.
 
+
 ### Init scripts
 
 The [Debian 6 init.d script](init.d/debian-6-dyndnsd) assumes that dyndnsd.rb is installed into the system ruby (no RVM support) and the config.yaml is at /opt/dyndnsd/config.yaml. Modify to your needs.
+
 
 ### Monitoring
 
@@ -174,6 +231,7 @@ users:
     password: "ihavenohosts"
 ```
 
+
 ### Tracing (experimental)
 
 For tracing, dyndnsd.rb is instrumented using the [OpenTracing](http://opentracing.io/) framework and will emit span tracing data for the most important operations happening during the request/response cycle. Using a middleware for Rack allows handling incoming OpenTracing span information properly.
@@ -212,6 +270,7 @@ users:
   test:
     password: "ihavenohosts"
 ```
+
 
 ## License
 

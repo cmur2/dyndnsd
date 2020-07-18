@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.3'
 
+  s.add_runtime_dependency 'async-dns', '~> 1.2.0'
   s.add_runtime_dependency 'jaeger-client', '~> 0.10.0'
   s.add_runtime_dependency 'metriks'
   s.add_runtime_dependency 'opentracing', '~> 0.5.0'

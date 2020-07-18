@@ -5,6 +5,7 @@
 IMPROVEMENTS:
 
 - Allow enabling debug logging
+- Add updater that uses [DNS zone transfers via AXFR (RFC5936)](https://tools.ietf.org/html/rfc5936) to allow any secondary nameserver(s) to fetch the zone contents after (optionally) receiving a [DNS NOTIFY (RFC1996)](https://tools.ietf.org/html/rfc1996) request
 
 ## 2.2.0 (March 6, 2020)
 

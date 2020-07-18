@@ -13,6 +13,7 @@ require 'rack/tracer'
 
 require 'dyndnsd/generator/bind'
 require 'dyndnsd/updater/command_with_bind_zone'
+require 'dyndnsd/updater/zone_transfer_server'
 require 'dyndnsd/responder/dyndns_style'
 require 'dyndnsd/responder/rest_style'
 require 'dyndnsd/database'
@@ -317,6 +318,8 @@ module Dyndnsd
       case config.dig('updater', 'name')
       when 'command_with_bind_zone'
         updater = Updater::CommandWithBindZone.new(config['domain'], config.dig('updater', 'params'))
+      when 'zone_transfer_server'
+        updater = Updater::ZoneTransferServer.new(config['domain'], config.dig('updater', 'params'))
       end
       daemon = Daemon.new(config, db, updater)
 
