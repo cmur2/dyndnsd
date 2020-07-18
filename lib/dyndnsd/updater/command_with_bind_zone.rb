@@ -4,11 +4,11 @@ module Dyndnsd
   module Updater
     class CommandWithBindZone
       # @param domain [String]
-      # @param config [Hash{String => Object}]
-      def initialize(domain, config)
-        @zone_file = config['zone_file']
-        @command = config['command']
-        @generator = Generator::Bind.new(domain, config)
+      # @param updater_params [Hash{String => Object}]
+      def initialize(domain, updater_params)
+        @zone_file = updater_params['zone_file']
+        @command = updater_params['command']
+        @generator = Generator::Bind.new(domain, updater_params)
       end
 
       # @param db [Dyndnsd::Database]
