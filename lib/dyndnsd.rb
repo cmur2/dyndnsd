@@ -249,6 +249,7 @@ module Dyndnsd
 
       Dyndnsd.logger.progname = 'dyndnsd'
       Dyndnsd.logger.formatter = LogFormatter.new
+      Dyndnsd.logger.level = config['debug'] ? Logger::DEBUG : Logger::INFO
     end
 
     # @return [void]

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.0
+
+IMPROVEMENTS:
+
+- Allow enabling debug logging
+
 ## 2.2.0 (March 6, 2020)
 
 IMPROVEMENTS:

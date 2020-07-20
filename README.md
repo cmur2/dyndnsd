@@ -25,7 +25,7 @@ Create a configuration file in YAML format somewhere:
 ```yaml
 # listen address and port
 host: "0.0.0.0"
-port: "80"
+port: 80
 # optional: drop privileges in case you want to but you may need sudo for external commands
 user: "nobody"
 group: "nogroup"
@@ -33,6 +33,8 @@ group: "nogroup"
 logfile: "dyndnsd.log"
 # internal database file
 db: "db.json"
+# enable debug mode?
+debug: false
 # all hostnames are required to be cool-name.example.org
 domain: "example.org"
 # configure the updater, here we use command_with_bind_zone, params are updater-specific
@@ -68,7 +70,7 @@ A feature NSD is lacking is the [Dynamic DNS update](https://tools.ietf.org/html
 
 ```yaml
 host: "0.0.0.0"
-port: "8245" # the DynDNS.com alternative HTTP port
+port: 8245 # the DynDNS.com alternative HTTP port
 db: "/opt/dyndnsd/db.json"
 domain: "dyn.example.org"
 updater:
@@ -88,7 +90,7 @@ users:
   foo:
     password: "secret"
     hosts:
-      - foo.example.org  
+      - foo.example.org
 ```
 
 Start dyndnsd.rb before NSD to make sure the zone file exists else NSD complains.
@@ -139,7 +141,7 @@ For monitoring dyndnsd.rb uses the [metriks](https://github.com/eric/metriks) fr
 
 ```yaml
 host: "0.0.0.0"
-port: "8245" # the DynDNS.com alternative HTTP port
+port: 8245 # the DynDNS.com alternative HTTP port
 db: "/opt/dyndnsd/db.json"
 domain: "dyn.example.org"
 # configure the Graphite backend to be used instead of proctitle
@@ -180,7 +182,7 @@ Currently only one OpenTracing-compatible tracer implementation named [CNCF Jaeg
 
 ```yaml
 host: "0.0.0.0"
-port: "8245" # the DynDNS.com alternative HTTP port
+port: 8245 # the DynDNS.com alternative HTTP port
 db: "/opt/dyndnsd/db.json"
 domain: "dyn.example.org"
 # enable and configure tracing using the (currently only) tracer jaeger
