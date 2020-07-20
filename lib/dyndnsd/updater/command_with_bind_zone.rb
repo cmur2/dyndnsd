@@ -14,6 +14,9 @@ module Dyndnsd
       # @param db [Dyndnsd::Database]
       # @return [void]
       def update(db)
+        # do not regenerate zone file (assumed to be persistent) if DB did not change
+        return if !db.changed?
+
         Helper.span('updater_update') do |span|
           span.set_tag('dyndnsd.updater.name', self.class.name&.split('::')&.last || 'None')
 

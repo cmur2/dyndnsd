@@ -68,6 +68,9 @@ Style/HashTransformValues:
 Style/IdenticalConditionalBranches:
   Enabled: false
 
+Style/IfUnlessModifier:
+  Enabled: false
+
 Style/InverseMethods:
   Enabled: false
 
@@ -78,4 +81,7 @@ Style/RescueModifier:
   Enabled: false
 
 Style/SymbolArray:
+  Enabled: false
+
+Style/TrailingCommaInArrayLiteral:
   Enabled: false

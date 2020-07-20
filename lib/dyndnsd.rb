@@ -56,9 +56,9 @@ module Dyndnsd
       @db.load
       @db['serial'] ||= 1
       @db['hosts'] ||= {}
+      @updater.update(@db)
       if @db.changed?
         @db.save
-        @updater.update(@db)
       end
     end
 
@@ -193,8 +193,8 @@ module Dyndnsd
     def update_db
       @db['serial'] += 1
       Dyndnsd.logger.info "Committing update ##{@db['serial']}"
-      @db.save
       @updater.update(@db)
+      @db.save
       Metriks.meter('updates.committed').mark
     end
 
@@ -313,7 +313,10 @@ module Dyndnsd
     private_class_method def self.setup_rack(config)
       # configure daemon
       db = Database.new(config['db'])
-      updater = Updater::CommandWithBindZone.new(config['domain'], config.dig('updater', 'params')) if config.dig('updater', 'name') == 'command_with_bind_zone'
+      case config.dig('updater', 'name')
+      when 'command_with_bind_zone'
+        updater = Updater::CommandWithBindZone.new(config['domain'], config.dig('updater', 'params'))
+      end
       daemon = Daemon.new(config, db, updater)
 
       # configure rack
