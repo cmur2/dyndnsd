@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.1
+
+IMPROVEMENTS:
+
+- Fix annoying error message `log writing failed. can't be called from trap context` on shutdown by not attempting to log redundant information there
+
 ## 2.3.0 (July 20, 2020)
 
 IMPROVEMENTS:

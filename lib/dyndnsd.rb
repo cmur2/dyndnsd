@@ -256,11 +256,9 @@ module Dyndnsd
     # @return [void]
     private_class_method def self.setup_traps
       Signal.trap('INT') do
-        Dyndnsd.logger.info 'Quitting...'
         Rack::Handler::WEBrick.shutdown
       end
       Signal.trap('TERM') do
-        Dyndnsd.logger.info 'Quitting...'
         Rack::Handler::WEBrick.shutdown
       end
     end
