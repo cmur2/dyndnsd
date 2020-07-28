@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0
+
+IMPROVEMENTS:
+
+- Drop EOL Ruby 2.4 and lower support, now minimum version supported is Ruby 2.5
+
 ## 2.3.1 (July 27, 2020)
 
 IMPROVEMENTS:
