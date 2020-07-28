@@ -28,11 +28,9 @@ module Dyndnsd
           sleep @interval
 
           Thread.new do
-            begin
-              write
-            rescue StandardError => e
-              @on_error[e] rescue nil
-            end
+            write
+          rescue StandardError => e
+            @on_error[e] rescue nil
           end
         end
       end
