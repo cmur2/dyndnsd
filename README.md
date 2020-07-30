@@ -187,9 +187,11 @@ If you want to provide an additional IPv6 address as myip6 parameter, the myip p
 Use a webserver as a proxy to handle SSL and/or multiple listen addresses and ports. DynDNS.com provides HTTP on port 80 and 8245 and HTTPS on port 443.
 
 
-### Init scripts
+### Startup
 
-The [Debian 6 init.d script](init.d/debian-6-dyndnsd) assumes that dyndnsd.rb is installed into the system ruby (no RVM support) and the config.yaml is at /opt/dyndnsd/config.yaml. Modify to your needs.
+There is a [Dockerfile](docs/Dockerfile) that can be used to build a Docker image for running dyndnsd.rb.
+
+The [Debian 6 init.d script](docs/debian-6-init-dyndnsd) assumes that dyndnsd.rb is installed into the system ruby (no RVM support) and the config.yaml is at /opt/dyndnsd/config.yaml. Modify to your needs.
 
 
 ### Monitoring
