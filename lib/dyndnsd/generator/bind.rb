@@ -27,7 +27,7 @@ module Dyndnsd
           ips.each do |ip|
             ip = IPAddr.new(ip).native
             type = ip.ipv6? ? 'AAAA' : 'A'
-            name = hostname.chomp('.' + @domain)
+            name = hostname.chomp(".#{@domain}")
             out << "#{name} IN #{type} #{ip}"
           end
         end

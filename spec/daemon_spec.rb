@@ -6,7 +6,7 @@ describe Dyndnsd::Daemon do
   include Rack::Test::Methods
 
   def app
-    Dyndnsd.logger = Logger.new(STDOUT)
+    Dyndnsd.logger = Logger.new($stdout)
     Dyndnsd.logger.level = Logger::UNKNOWN
 
     config = {

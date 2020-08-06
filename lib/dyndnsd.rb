@@ -245,7 +245,7 @@ module Dyndnsd
       if config['logfile']
         Dyndnsd.logger = Logger.new(config['logfile'])
       else
-        Dyndnsd.logger = Logger.new(STDOUT)
+        Dyndnsd.logger = Logger.new($stdout)
       end
 
       Dyndnsd.logger.progname = 'dyndnsd'
