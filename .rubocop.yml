@@ -1,13 +1,6 @@
-inherit_from: .rubocop_todo.yml
-
 AllCops:
-  TargetRubyVersion: '2.3'
-
-Gemspec/OrderedDependencies:
-  Enabled: false
-
-Layout/AlignHash:
-  Enabled: false
+  TargetRubyVersion: '2.5'
+  NewCops: enable
 
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
@@ -16,8 +9,14 @@ Layout/EmptyLineAfterGuardClause:
 Layout/EmptyLinesAroundArguments:
   Enabled: false
 
-Layout/LeadingBlankLines:
+Layout/HashAlignment:
   Enabled: false
+
+Layout/LeadingEmptyLines:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 200
 
 Layout/SpaceInsideHashLiteralBraces:
   Enabled: false
@@ -34,16 +33,13 @@ Metrics/ClassLength:
 Metrics/CyclomaticComplexity:
   Enabled: false
 
-Metrics/LineLength:
-  Max: 200
-
 Metrics/MethodLength:
   Enabled: false
 
 Metrics/PerceivedComplexity:
   Enabled: false
 
-Naming/UncommunicativeMethodParamName:
+Naming/MethodParameterName:
   Enabled: false
 
 Naming/MemoizedInstanceVariableName:
@@ -58,13 +54,22 @@ Style/Documentation:
 Style/FormatStringToken:
   Enabled: false
 
-Style/FrozenStringLiteralComment:
-  Enabled: false
-
 Style/GuardClause:
   Enabled: false
 
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
+
 Style/IdenticalConditionalBranches:
+  Enabled: false
+
+Style/IfUnlessModifier:
   Enabled: false
 
 Style/InverseMethods:
@@ -77,4 +82,7 @@ Style/RescueModifier:
   Enabled: false
 
 Style/SymbolArray:
+  Enabled: false
+
+Style/TrailingCommaInArrayLiteral:
   Enabled: false

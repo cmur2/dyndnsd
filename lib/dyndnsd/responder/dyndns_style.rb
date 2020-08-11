@@ -1,11 +1,15 @@
+# frozen_string_literal: true
 
 module Dyndnsd
   module Responder
     class DynDNSStyle
+      # @param app [#call]
       def initialize(app)
         @app = app
       end
 
+      # @param env [Hash{String => String}]
+      # @return [Array{Integer,Hash{String => String},Array{String}}]
       def call(env)
         @app.call(env).tap do |status_code, headers, body|
           if headers.key?('X-DynDNS-Response')
@@ -18,26 +22,40 @@ module Dyndnsd
 
       private
 
+      # @param status_code [Integer]
+      # @param headers [Hash{String => String}]
+      # @param body [Array{String}]
+      # @return [Array{Integer,Hash{String => String},Array{String}}]
       def decorate_dyndnsd_response(status_code, headers, body)
-        if status_code == 200
+        case status_code
+        when 200
           [200, {'Content-Type' => 'text/plain'}, [get_success_body(body[0], body[1])]]
-        elsif status_code == 422
+        when 422
           error_response_map[headers['X-DynDNS-Response']]
         end
       end
 
+      # @param status_code [Integer]
+      # @param headers [Hash{String => String}]
+      # @param _body [Array{String}]
+      # @return [Array{Integer,Hash{String => String},Array{String}}]
       def decorate_other_response(status_code, headers, _body)
-        if status_code == 400
+        case status_code
+        when 400
           [status_code, headers, ['Bad Request']]
-        elsif status_code == 401
+        when 401
           [status_code, headers, ['badauth']]
         end
       end
 
+      # @param changes [Array{Symbol}]
+      # @param myips [Array{String}]
+      # @return [String]
       def get_success_body(changes, myips)
         changes.map { |change| "#{change} #{myips.join(' ')}" }.join("\n")
       end
 
+      # @return [Hash{String => Object}]
       def error_response_map
         {
           # general http errors

@@ -1,15 +1,20 @@
+# frozen_string_literal: true
 
 module Dyndnsd
   module Generator
     class Bind
-      def initialize(domain, config)
+      # @param domain [String]
+      # @param updater_params [Hash{String => Object}]
+      def initialize(domain, updater_params)
         @domain = domain
-        @ttl = config['ttl']
-        @dns = config['dns']
-        @email_addr = config['email_addr']
-        @additional_zone_content = config['additional_zone_content']
+        @ttl = updater_params['ttl']
+        @dns = updater_params['dns']
+        @email_addr = updater_params['email_addr']
+        @additional_zone_content = updater_params['additional_zone_content']
       end
 
+      # @param db [Dyndnsd::Database]
+      # @return [String]
       def generate(db)
         out = []
         out << "$TTL #{@ttl}"
@@ -22,7 +27,7 @@ module Dyndnsd
           ips.each do |ip|
             ip = IPAddr.new(ip).native
             type = ip.ipv6? ? 'AAAA' : 'A'
-            name = hostname.chomp('.' + @domain)
+            name = hostname.chomp(".#{@domain}")
             out << "#{name} IN #{type} #{ip}"
           end
         end

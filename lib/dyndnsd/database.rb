@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 require 'forwardable'
 
@@ -7,19 +8,22 @@ module Dyndnsd
 
     def_delegators :@db, :[], :[]=, :each, :has_key?
 
+    # @param db_file [String]
     def initialize(db_file)
       @db_file = db_file
     end
 
+    # @return [void]
     def load
       if File.file?(@db_file)
-        @db = JSON.parse(File.open(@db_file, 'r', &:read))
+        @db = JSON.parse(File.read(@db_file, mode: 'r'))
       else
         @db = {}
       end
       @db_hash = @db.hash
     end
 
+    # @return [void]
     def save
       Helper.span('database_save') do |_span|
         File.open(@db_file, 'w') { |f| JSON.dump(@db, f) }
@@ -27,6 +31,7 @@ module Dyndnsd
       end
     end
 
+    # @return [Boolean]
     def changed?
       @db_hash != @db.hash
     end

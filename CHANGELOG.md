@@ -1,5 +1,45 @@
 # Changelog
 
+## 3.0.0 (July 29, 2020)
+
+IMPROVEMENTS:
+
+- Drop EOL Ruby 2.4 and lower support, now minimum version supported is Ruby 2.5
+
+## 2.3.1 (July 27, 2020)
+
+IMPROVEMENTS:
+
+- Fix annoying error message `log writing failed. can't be called from trap context` on shutdown by not attempting to log redundant information there
+
+## 2.3.0 (July 20, 2020)
+
+IMPROVEMENTS:
+
+- Allow enabling debug logging
+- Add updater that uses [DNS zone transfers via AXFR (RFC5936)](https://tools.ietf.org/html/rfc5936) to allow any secondary nameserver(s) to fetch the zone contents after (optionally) receiving a [DNS NOTIFY (RFC1996)](https://tools.ietf.org/html/rfc1996) request
+
+## 2.2.0 (March 6, 2020)
+
+IMPROVEMENTS:
+
+- Refactor gemspec based on [recommendations](https://piotrmurach.com/articles/writing-a-ruby-gem-specification/) so tests are now excluded from gem and binaries move to `./exe` directory
+- Adopt Ruby 2.3 frozen string literals for source code potentially reducing memory consumption
+
+## 2.1.1 (March 1, 2020)
+
+IMPROVEMENTS:
+
+- Fix potential `nil` cases detected by [Sorbet](https://sorbet.org) including refactorings
+
+## 2.1.0 (March 1, 2020)
+
+IMPROVEMENTS:
+
+- Add Ruby 2.7 support
+- Add [solargraph](https://github.com/castwide/solargraph) to dev tooling as Ruby Language Server usable e.g. for IDEs (used solargraph version not compatible with Ruby 2.7 as bundler-audit 0.6.x requires old `thor` gem)
+- Document code using YARD tags, e.g. for type information and better code completion
+
 ## 2.0.0 (January 25, 2019)
 
 IMPROVEMENTS:
@@ -9,7 +49,7 @@ IMPROVEMENTS:
 - Better code maintainability by refactorings
 - Update dependencies, mainly `rack` to new major version 2
 - Add Ruby 2.5 and Ruby 2.6 support
-- Add experimental [OpenTracing](http://opentracing.io/) support with [CNCF Jaeger](https://github.com/jaegertracing/jaeger)
+- Add experimental [OpenTracing](https://opentracing.io/) support with [CNCF Jaeger](https://github.com/jaegertracing/jaeger)
 - Support host offlining by deleting the associated DNS records
 - Add textfile reporter to write Graphite-style metrics (also compatible with [Prometheus](https://prometheus.io/)) into a file
 
