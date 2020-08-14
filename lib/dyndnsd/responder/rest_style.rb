@@ -9,7 +9,7 @@ module Dyndnsd
       end
 
       # @param env [Hash{String => String}]
-      # @return [Array{Integer,Hash{String => String},Array{String}}]
+      # @return [Array{Integer,Hash{String => String},Array<String>}]
       def call(env)
         @app.call(env).tap do |status_code, headers, body|
           if headers.key?('X-DynDNS-Response')
@@ -24,8 +24,8 @@ module Dyndnsd
 
       # @param status_code [Integer]
       # @param headers [Hash{String => String}]
-      # @param body [Array{String}]
-      # @return [Array{Integer,Hash{String => String},Array{String}}]
+      # @param body [Array<String>]
+      # @return [Array{Integer,Hash{String => String},Array<String>}]
       def decorate_dyndnsd_response(status_code, headers, body)
         case status_code
         when 200
@@ -37,8 +37,8 @@ module Dyndnsd
 
       # @param status_code [Integer]
       # @param headers [Hash{String => String}]
-      # @param _body [Array{String}]
-      # @return [Array{Integer,Hash{String => String},Array{String}}]
+      # @param _body [Array<String>]
+      # @return [Array{Integer,Hash{String => String},Array<String>}]
       def decorate_other_response(status_code, headers, _body)
         case status_code
         when 400
@@ -48,8 +48,8 @@ module Dyndnsd
         end
       end
 
-      # @param changes [Array{Symbol}]
-      # @param myips [Array{String}]
+      # @param changes [Array<Symbol>]
+      # @param myips [Array<String>]
       # @return [String]
       def get_success_body(changes, myips)
         changes.map { |change| change == :good ? "Changed to #{myips.join(' ')}" : "No change needed for #{myips.join(' ')}" }.join("\n")

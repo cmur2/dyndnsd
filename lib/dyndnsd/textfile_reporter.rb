@@ -94,8 +94,8 @@ module Dyndnsd
     # @param file [String]
     # @param base_name [String]
     # @param metric [Object]
-    # @param keys [Array{Symbol}]
-    # @param snapshot_keys [Array{Symbol}]
+    # @param keys [Array<Symbol>]
+    # @param snapshot_keys [Array<Symbol>]
     # @return [void]
     def write_metric(file, base_name, metric, keys, snapshot_keys = [])
       time = Time.now.to_i

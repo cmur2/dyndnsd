@@ -21,4 +21,4 @@ end
 
 task default: [:rubocop, :spec, 'bundle:audit']
 
-task travis: [:default, :'solargraph:tc']
+task travis: [:default, :'solargraph:init', :'solargraph:tc']

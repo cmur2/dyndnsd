@@ -85,7 +85,7 @@ module Dyndnsd
 
       # converts into suitable parameter form for Async::DNS::Resolver or Async::DNS::Server
       #
-      # @param endpoint_list [Array{String}]
+      # @param endpoint_list [Array<String>]
       # @return [Array{Array{Object}}]
       def self.parse_endpoints(endpoint_list)
         endpoint_list.map { |addr_string| addr_string.split('@') }
@@ -139,7 +139,7 @@ module Dyndnsd
 
       # @param name [String]
       # @param resource_class [Resolv::DNS::Resource]
-      # @param transaction [Async::DNS::Transaction]
+      # Since solargraph cannot parse this: param transaction [Async::DNS::Transaction]
       # @return [void]
       def process(name, resource_class, transaction)
         if name != @domain || resource_class != Resolv::DNS::Resource::Generic::Type252_Class1

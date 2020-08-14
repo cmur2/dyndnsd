@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'date'
 require 'etc'
 require 'logger'
 require 'ipaddr'
@@ -80,7 +81,7 @@ module Dyndnsd
     end
 
     # @param env [Hash{String => String}]
-    # @return [Array{Integer,Hash{String => String},Array{String}}]
+    # @return [Array{Integer,Hash{String => String},Array<String>}]
     def call(env)
       return [422, {'X-DynDNS-Response' => 'method_forbidden'}, []] if env['REQUEST_METHOD'] != 'GET'
       return [422, {'X-DynDNS-Response' => 'not_found'}, []] if env['PATH_INFO'] != '/nic/update'
@@ -134,7 +135,7 @@ module Dyndnsd
     private
 
     # @param params [Hash{String => String}]
-    # @return [Array{String}]
+    # @return [Array<String>]
     def extract_v4_and_v6_address(params)
       return [] if !(params['myip'])
       begin
@@ -148,7 +149,7 @@ module Dyndnsd
 
     # @param env [Hash{String => String}]
     # @param params [Hash{String => String}]
-    # @return [Array{String}]
+    # @return [Array<String>]
     def extract_myips(env, params)
       # require presence of myip parameter as valid IPAddr (v4) and valid myip6
       return extract_v4_and_v6_address(params) if params.key?('myip6')
@@ -164,8 +165,8 @@ module Dyndnsd
     end
 
     # @param hostnames [String]
-    # @param myips [Array{String}]
-    # @return [Array{Symbol}]
+    # @param myips [Array<String>]
+    # @return [Array<Symbol>]
     def process_changes(hostnames, myips)
       changes = []
       Helper.span('process_changes') do |span|
@@ -200,7 +201,7 @@ module Dyndnsd
     end
 
     # @param env [Hash{String => String}]
-    # @return [Array{Integer,Hash{String => String},Array{String}}]
+    # @return [Array{Integer,Hash{String => String},Array<String>}]
     def handle_dyndns_request(env)
       params = Rack::Utils.parse_query(env['QUERY_STRING'])
 
