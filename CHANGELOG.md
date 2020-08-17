@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.0
+
+IMPROVEMENTS:
+
+- Add officially maintained [Docker image for dyndnsd](https://hub.docker.com/r/cmur2/dyndnsd)
+
 ## 3.0.0 (July 29, 2020)
 
 IMPROVEMENTS:

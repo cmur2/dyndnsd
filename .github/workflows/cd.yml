@@ -1,0 +1,26 @@
+---
+name: cd
+
+on:
+  push:
+    tags:
+    - 'v*.*.*'
+
+jobs:
+  release-dockerimage:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Extract dyndnsd version from tag name
+      run: |
+        echo ::set-env name=DYNDNSD_VERSION::${GITHUB_REF#refs/*/v}
+    # https://github.com/marketplace/actions/build-and-push-docker-images
+    - name: Build and push Docker image for dyndnsd ${{ env.DYNDNSD_VERSION }}
+      uses: docker/build-push-action@v1
+      with:
+        username: cmur2
+        password: ${{ secrets.DOCKER_TOKEN }}
+        repository: cmur2/dyndnsd
+        path: docker
+        build_args: DYNDNSD_VERSION=${{ env.DYNDNSD_VERSION }}
+        tag_with_ref: true
