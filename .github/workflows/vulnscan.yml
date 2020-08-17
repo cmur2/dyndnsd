@@ -1,0 +1,42 @@
+---
+name: vulnscan
+
+on:
+  schedule:
+  - cron: '7 4 * * 4'  # weekly on thursday morning
+
+jobs:
+  scan-released-dockerimages:
+    runs-on: ubuntu-latest
+    env:
+      TRIVY_LIGHT: 'true'
+      TRIVY_IGNORE_UNFIXED: 'true'
+      TRIVY_REMOVED_PKGS: 'true'
+    steps:
+    - name: Install Trivy
+      run: |
+        mkdir -p $GITHUB_WORKSPACE/bin
+        echo "::add-path::$GITHUB_WORKSPACE/bin"
+        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/master/contrib/install.sh | sh -s -- -b $GITHUB_WORKSPACE/bin
+    - name: Download Trivy DB
+      run: |
+        trivy image --download-db-only
+    - name: Scan vulnerabilities using Trivy
+      run: |
+        trivy --version
+
+        ALL_IMAGES="$(curl -s https://hub.docker.com/v2/repositories/cmur2/dyndnsd/tags?page_size=1000 | jq -r '.results[].name | "cmur2/dyndnsd:" + .' | grep -e 'cmur2/dyndnsd:v' | sort -r)"
+        EXIT_CODE=0
+        set -e
+        for major_version in $(seq 1 10); do
+          for image in $ALL_IMAGES; do
+            if [[ "$image" = cmur2/dyndnsd:v$major_version.* ]]; then
+              echo -n "\nScanning newest patch release $image of major v$major_version...\n"
+              if ! trivy image --skip-update --exit-code 1 "$image"; then
+                EXIT_CODE=1
+              fi
+              break
+            fi
+          done
+        done
+        exit "$EXIT_CODE"

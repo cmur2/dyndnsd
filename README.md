@@ -64,7 +64,42 @@ users:
 
 Run dyndnsd.rb by:
 
-	dyndnsd /path/to/config.yaml
+```bash
+dyndnsd /path/to/config.yml
+```
+
+
+### Docker image
+
+There is an officially maintained [Docker image for dyndnsd](https://hub.docker.com/r/cmur2/dyndnsd) available at Dockerhub. The goal is to have a minimal secured image available (currently based on Alpine) that works well for the `zone_transfer_server` updater use case.
+
+Users can make extensions by deriving from the official Docker image or building their own.
+
+The Docker image consumes the same configuration file in YAML format as the gem, inside the container it needs to be mounted/available as `/etc/dyndnsd/config.yml`. the following YAML should be used as a base and extended with user's settings:
+
+```yaml
+host: "0.0.0.0"
+port: 8080
+# omit the logfile: option so logging to STDOUT will happen automatically
+db: "/var/lib/db.json"
+
+# User's settings for updater and permissions follow here!
+```
+
+more ports might be needed depending on if DNS zone transfer is needed
+
+Run the Docker image exposing the DynDNS-API on host port 8080 via:
+
+```bash
+docker run -d --name dyndnsd \
+           -p 8080:8080 \
+           -v /host/path/to/dyndnsd/config.yml:/etc/dyndnsd/config.yml \
+           -v /host/path/to/dyndnsd/db.json:/var/lib/db.json \
+           cmur2/dyndnsd:vX.Y.Z
+```
+
+*Note*: You may need to expose more then just port 8080 e.g. if you use the `zone_transfer_server` which can be done by appending additional `-p 5353:5353` flags to the `docker run` command.
+
 
 
 ## Using dyndnsd.rb with any nameserver via DNS zone transfers (AXFR)
