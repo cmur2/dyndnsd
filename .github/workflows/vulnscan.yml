@@ -4,6 +4,7 @@ name: vulnscan
 on:
   schedule:
   - cron: '7 4 * * 4'  # weekly on thursday morning
+  workflow_dispatch:
 
 jobs:
   scan-released-dockerimages:
