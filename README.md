@@ -81,7 +81,7 @@ The Docker image consumes the same configuration file in YAML format as the gem,
 host: "0.0.0.0"
 port: 8080
 # omit the logfile: option so logging to STDOUT will happen automatically
-db: "/var/lib/db.json"
+db: "/var/lib/dyndnsd/db.json"
 
 # User's settings for updater and permissions follow here!
 ```
@@ -94,7 +94,7 @@ Run the Docker image exposing the DynDNS-API on host port 8080 via:
 docker run -d --name dyndnsd \
            -p 8080:8080 \
            -v /host/path/to/dyndnsd/config.yml:/etc/dyndnsd/config.yml \
-           -v /host/path/to/dyndnsd/db.json:/var/lib/db.json \
+           -v /host/ptherpath/to/dyndnsd/datadir:/var/lib/dyndnsd \
            cmur2/dyndnsd:vX.Y.Z
 ```
 
