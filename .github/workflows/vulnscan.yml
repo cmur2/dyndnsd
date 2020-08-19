@@ -26,13 +26,14 @@ jobs:
       run: |
         trivy --version
 
-        ALL_IMAGES="$(curl -s https://hub.docker.com/v2/repositories/cmur2/dyndnsd/tags?page_size=1000 | jq -r '.results[].name | "cmur2/dyndnsd:" + .' | grep -e 'cmur2/dyndnsd:v' | sort -r)"
+        # semver sorting as per https://stackoverflow.com/a/40391207/2148786
+        ALL_IMAGES="$(curl -s https://hub.docker.com/v2/repositories/cmur2/dyndnsd/tags?page_size=1000 | jq -r '.results[].name | "cmur2/dyndnsd:" + .' | grep -e 'cmur2/dyndnsd:v' | sed '/-/!{s/$/_/}' | sort -r -V | sed 's/_$//')"
         EXIT_CODE=0
         set -e
         for major_version in $(seq 1 10); do
           for image in $ALL_IMAGES; do
             if [[ "$image" = cmur2/dyndnsd:v$major_version.* ]]; then
-              echo -n "\nScanning newest patch release $image of major v$major_version...\n"
+              echo -e "\nScanning newest patch release $image of major v$major_version...\n"
               if ! trivy image --skip-update --exit-code 1 "$image"; then
                 EXIT_CODE=1
               fi
