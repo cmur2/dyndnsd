@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.1.0
+## 3.1.0 (August 19, 2020)
 
 IMPROVEMENTS:
 
