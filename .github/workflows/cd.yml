@@ -10,7 +10,7 @@ jobs:
   release-dockerimage:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Extract dyndnsd version from tag name
       run: |
         echo ::set-env name=DYNDNSD_VERSION::${GITHUB_REF#refs/*/v}
