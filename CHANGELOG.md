@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.1
+
+IMPROVEMENTS:
+
+- Use webrick gem which contains fixes against [CVE-2020-25613](https://www.ruby-lang.org/en/news/2020/09/29/http-request-smuggling-cve-2020-25613/)
+
 ## 3.1.0 (August 19, 2020)
 
 IMPROVEMENTS:
