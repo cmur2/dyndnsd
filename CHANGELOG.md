@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.1.1
+## 3.1.1 (october 3, 2020)
 
 IMPROVEMENTS:
 
