@@ -24,7 +24,7 @@ jobs:
         trivy image --download-db-only
     - name: Scan vulnerabilities using Trivy
       env:
-        TRIVY_SKIP_DIRS: '/usr/lib/ruby/gems/2.7.0/gems/jaeger-client-0.10.0/crossdock,/usr/lib/ruby/gems/2.7.0/gems/jaeger-client-1.0.0/crossdock'
+        TRIVY_SKIP_DIRS: 'usr/lib/ruby/gems/2.7.0/gems/jaeger-client-0.10.0/crossdock,usr/lib/ruby/gems/2.7.0/gems/jaeger-client-1.0.0/crossdock,usr/lib/ruby/gems/2.7.0/gems/jaeger-client-1.1.0/crossdock'
       run: |
         trivy --version
 
