@@ -60,7 +60,7 @@ module Dyndnsd
           message: e.message,
           stack: e.backtrace&.join("\n") || ''
         )
-        raise
+        raise e
       ensure
         scope.close
       end
