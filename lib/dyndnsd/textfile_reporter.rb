@@ -18,7 +18,7 @@ module Dyndnsd
 
       @registry  = options[:registry] || Metriks::Registry.default
       @interval  = options[:interval] || 60
-      @on_error  = options[:on_error] || proc { |ex| }
+      @on_error  = options[:on_error] || proc { |ex| } # default: ignore errors
     end
 
     # @return [void]
