@@ -1,0 +1,19 @@
+---
+name: dockerhub
+
+on:
+  schedule:
+  - cron: '7 4 * * 4'  # weekly on thursday morning
+  workflow_dispatch:
+
+jobs:
+  pull-released-dockerimages:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Avoid stale tags by pulling
+      run: |
+        ALL_IMAGES="$(curl -s https://hub.docker.com/v2/repositories/cmur2/dyndnsd/tags?page_size=1000 | jq -r '.results[].name | "cmur2/dyndnsd:" + .' | grep -e 'cmur2/dyndnsd:v')"
+        for image in $ALL_IMAGES; do
+          echo "Pulling $image to avoid staleness..."
+          docker pull "$image"
+        done
