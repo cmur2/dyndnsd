@@ -10,4 +10,4 @@ services:
 - docker
 
 script:
-- bundle exec rake travis
+- bundle exec rake ci

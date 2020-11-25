@@ -1,0 +1,32 @@
+---
+name: ci
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  schedule:
+  - cron: '35 4 * * 4'  # weekly on thursday morning
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version:
+        - '2.5'
+        - '2.6'
+        - '2.7'
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Ruby ${{ matrix.ruby-version }}
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+    - name: Install dependencies
+      run: |
+        bundle
+    - name: Test
+      run: |
+        bundle exec rake ci

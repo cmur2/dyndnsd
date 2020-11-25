@@ -28,4 +28,4 @@ end
 
 task default: [:rubocop, :spec, 'bundle:audit', :solargraph]
 
-task travis: ['solargraph:init', :default, :hadolint]
+task ci: ['solargraph:init', :default, :hadolint]
