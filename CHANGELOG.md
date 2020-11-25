@@ -1,6 +1,12 @@
 # Changelog
 
-## 3.1.1 (october 3, 2020)
+## 3.1.2
+
+OTHER:
+
+- start using Github Actions CI for tests in addition to Travis CI
+
+## 3.1.1 (October 3, 2020)
 
 IMPROVEMENTS:
 
