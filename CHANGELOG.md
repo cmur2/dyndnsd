@@ -4,7 +4,7 @@
 
 OTHER:
 
-- start using Github Actions CI for tests in addition to Travis CI
+- start using Github Actions CI for tests and drop Travis CI
 
 ## 3.1.1 (October 3, 2020)
 
