@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.3 (December 20, 2020)
+
+OTHER:
+
+- fix Docker image release process in Github Actions CI, 3.1.2 was not released as a Docker image
+
 ## 3.1.2 (December 20, 2020)
 
 OTHER:
