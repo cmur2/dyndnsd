@@ -1,9 +1,10 @@
 # Changelog
 
-## 3.1.2
+## 3.1.2 (December 20, 2020)
 
 OTHER:
 
+- fixes vulnerabilities in Docker image by using updated Alpine base image
 - start using Github Actions CI for tests and drop Travis CI
 
 ## 3.1.1 (October 3, 2020)
