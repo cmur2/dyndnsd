@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.0
+
+IMPROVEMENTS:
+
+- Add Ruby 3.0 support
+
 ## 3.1.3 (December 20, 2020)
 
 OTHER:
