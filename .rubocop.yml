@@ -1,5 +1,6 @@
 require:
 - rubocop-rake
+- rubocop-rspec
 
 AllCops:
   TargetRubyVersion: '2.5'
@@ -89,3 +90,9 @@ Style/SymbolArray:
 
 Style/TrailingCommaInArrayLiteral:
   Enabled: false
+
+RSpec/ExampleLength:
+  Max: 20
+
+RSpec/MultipleExpectations:
+  Max: 20
