@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.2.0
+## 3.2.0 (January 14, 2021)
 
 IMPROVEMENTS:
 
