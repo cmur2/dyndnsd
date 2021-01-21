@@ -33,6 +33,7 @@ module Dyndnsd
         when 422
           error_response_map[headers['X-DynDNS-Response']]
         end
+        # TODO: possible nil response!
       end
 
       # @param status_code [Integer]
@@ -46,6 +47,7 @@ module Dyndnsd
         when 401
           [status_code, headers, ['Unauthorized']]
         end
+        # TODO: possible nil response!
       end
 
       # @param changes [Array<Symbol>]

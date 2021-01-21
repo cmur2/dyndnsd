@@ -1,0 +1,32 @@
+module Dyndnsd
+  type users = Hash[String, Hash[String, String]]
+  type hosts = Hash[String, Array[String]]
+
+  class Helper
+    # @param hostname [String]
+    # @param domain [String]
+    # @return [Boolean]
+    def self.fqdn_valid?: (String hostname, String domain) -> bool
+
+    # @param ip [String]
+    # @return [Boolean]
+    def self.ip_valid?: (String ip) -> bool
+
+    # @param username [String]
+    # @param password [String]
+    # @param users [Hash]
+    # @return [Boolean]
+    def self.user_allowed?: (String username, String password, users users) -> bool
+
+    # @param hostname [String]
+    # @param myips [Array]
+    # @param hosts [Hash]
+    # @return [Boolean]
+    def self.changed?: (String hostname, Array[String] myips, hosts hosts) -> bool
+
+    # @param operation [String]
+    # @param block [Proc]
+    # @return [void]
+    def self.span: (String operation) { (untyped) -> untyped } -> untyped
+  end
+end

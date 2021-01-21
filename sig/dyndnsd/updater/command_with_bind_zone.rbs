@@ -1,0 +1,9 @@
+module Dyndnsd
+  module Updater
+    class CommandWithBindZone
+      def initialize: (String domain, Hash[String, untyped] updater_params) -> void
+
+      def update: (Dyndnsd::Database db) -> void
+    end
+  end
+end

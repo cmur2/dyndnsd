@@ -276,7 +276,7 @@ module Dyndnsd
         reporter = Metriks::Reporter::Graphite.new(host, port, options)
         reporter.start
       elsif config['textfile']
-        file = config['textfile']['file'] || '/tmp/dyndnsd-metrics.prom'
+        file = (config['textfile']['file'] || '/tmp/dyndnsd-metrics.prom').to_s
         options = {}
         options[:prefix] = config['textfile']['prefix'] if config['textfile']['prefix']
         reporter = Dyndnsd::TextfileReporter.new(file, options)

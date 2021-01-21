@@ -1,0 +1,69 @@
+module Dyndnsd
+  type config = Hash[String, untyped]
+  type env = Hash[String, String]
+  type headers = Hash[String, String]
+  type response = Array[int | Hash[string, string] | Array[string]]
+
+  interface _App
+    def call: (env env) -> response
+  end
+
+
+  # @return [Logger]
+  def self.logger: () -> untyped
+
+  # @param logger [Logger]
+  # @return [Logger]
+  def self.logger=: (untyped logger) -> untyped
+
+  class LogFormatter
+    # @param lvl [Object]
+    # @param _time [DateTime]
+    # @param _progname [String]
+    # @param msg [Object]
+    # @return [String]
+    def call: (untyped lvl, DateTime _time, String _progname, untyped msg) -> String
+  end
+
+  class Daemon
+    # @param config [Hash{String => Object}]
+    # @param db [Dyndnsd::Database]
+    # @param updater [#update]
+    def initialize: (untyped config, untyped db, untyped updater) -> void
+
+    # @param username [String]
+    # @param password [String]
+    # @return [Boolean]
+    def authorized?: (String username, String password) -> bool
+
+    def call: (env env) -> response
+
+    def self.run!: () -> void
+
+    private
+
+    # @param params [Hash{String => String}]
+    # @return [Array<String>]
+    def extract_v4_and_v6_address: (untyped params) -> (::Array[untyped] | untyped)
+
+    # @param env [Hash{String => String}]
+    # @param params [Hash{String => String}]
+    # @return [Array<String>]
+    def extract_myips: (untyped env, untyped params) -> (untyped | ::Array[untyped])
+
+    # @param hostnames [String]
+    # @param myips [Array<String>]
+    # @return [Array<Symbol>]
+    def process_changes: (untyped hostnames, untyped myips) -> untyped
+
+    def update_db: () -> void
+
+    def handle_dyndns_request: (env env) -> response
+
+    def self.setup_logger: (config config) -> void
+    def self.setup_traps: () -> void
+    def self.setup_monitoring: (config config) -> void
+    def self.setup_tracing: (config config) -> void
+    def self.setup_rack: (config config) -> void
+  end
+end

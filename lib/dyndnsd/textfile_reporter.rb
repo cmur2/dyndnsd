@@ -91,7 +91,7 @@ module Dyndnsd
       end
     end
 
-    # @param file [String]
+    # @param file [File]
     # @param base_name [String]
     # @param metric [Object]
     # @param keys [Array<Symbol>]

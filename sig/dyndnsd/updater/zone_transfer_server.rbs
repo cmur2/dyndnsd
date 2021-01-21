@@ -1,0 +1,39 @@
+module Dyndnsd
+  module Updater
+    class ZoneTransferServer
+      DEFAULT_SERVER_LISTENS: Array[String]
+
+      def initialize: (String domain, Hash[String, untyped] updater_params) -> void
+
+      def update: (Dyndnsd::Database db) -> void
+
+      # converts into suitable parameter form for Async::DNS::Resolver or Async::DNS::Server
+      #
+      # @param endpoint_list [Array<String>]
+      # @return [Array{Array{Object}}]
+      def self.parse_endpoints: (Array[String] endpoint_list) -> Array[Array[untyped]]
+
+      private
+
+      # creates correct Resolv::DNS::Resource object for IP address type
+      #
+      # @param ip_string [String]
+      # @return [Resolv::DNS::Resource::IN::A,Resolv::DNS::Resource::IN::AAAA]
+      def create_addr_rr_for_ip: (String ip_string) -> untyped
+
+      def send_dns_notify: () -> void
+    end
+
+    class ZoneTransferServerHelper #< Async::DNS::Server
+      attr_accessor axfr_rrs: untyped
+
+      def initialize: (untyped endpoints, String domain) -> void
+
+      # @param name [String]
+      # @param resource_class [Resolv::DNS::Resource]
+      # Since solargraph cannot parse this: param transaction [Async::DNS::Transaction]
+      # @return [void]
+      def process: (String name, untyped resource_class, untyped transaction) -> void
+    end
+  end
+end

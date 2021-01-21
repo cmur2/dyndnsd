@@ -1,0 +1,3 @@
+module Dyndnsd
+  VERSION: ::String
+end
