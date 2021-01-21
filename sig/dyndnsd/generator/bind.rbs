@@ -1,0 +1,9 @@
+module Dyndnsd
+  module Generator
+    class Bind
+      def initialize: (String domain, Hash[String, untyped] updater_params) -> void
+
+      def generate: (Dyndnsd::Database db) -> string
+    end
+  end
+end

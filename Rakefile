@@ -26,7 +26,19 @@ task :hadolint do
   sh 'docker run --rm -i hadolint/hadolint:v1.18.0 hadolint --ignore DL3018 - < docker/Dockerfile'
 end
 
-task default: [:rubocop, :spec, 'bundle:audit', :solargraph]
+desc 'Run experimental steep type checker'
+task :steep do
+  sh 'steep check'
+end
+
+namespace :steep do
+  desc 'Output coverage stats from steep'
+  task :stats do
+    sh 'steep stats --log-level=fatal | awk -F\',\' \'{ printf "%-50s %-9s %-12s %-14s %-10s\n", $2, $3, $4, $5, $7 }\''
+  end
+end
+
+task default: [:rubocop, :spec, 'bundle:audit', :solargraph, :steep]
 
 desc 'Run all tasks desired for CI'
 task ci: ['solargraph:init', :default, :hadolint]

@@ -1,0 +1,19 @@
+module Dyndnsd
+  module Responder
+    class DynDNSStyle
+      def initialize: (_App app) -> void
+
+      def call: (env env) -> response?
+
+      private
+
+      def decorate_dyndnsd_response: (int status_code, headers headers, Array[untyped] body) -> response?
+
+      def decorate_other_response: (int status_code, headers headers, Array[untyped] _body) -> response?
+
+      def get_success_body: (Array[Symbol] changes, Array[string] myips) -> string
+
+      def error_response_map: () -> Hash[string, response]
+    end
+  end
+end

@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.executables = ['dyndnsd']
   s.extra_rdoc_files = Dir['README.md', 'CHANGELOG.md', 'LICENSE']
 
-  s.required_ruby_version = '>= 2.5'
+  s.required_ruby_version = '>= 3.0'
 
   s.add_runtime_dependency 'async-dns', '~> 1.2.0'
   s.add_runtime_dependency 'jaeger-client', '~> 1.1.0'
@@ -40,8 +40,9 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rack-test'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec'
-  s.add_development_dependency 'rubocop', '~> 1.8.1'
+  s.add_development_dependency 'rubocop', '~> 1.7.0'
   s.add_development_dependency 'rubocop-rake', '~> 0.5.1'
   s.add_development_dependency 'rubocop-rspec', '~> 2.1.0'
   s.add_development_dependency 'solargraph', '~> 0.40.0'
+  s.add_development_dependency 'steep', '~> 0.39.0'
 end

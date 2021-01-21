@@ -1,0 +1,21 @@
+module Dyndnsd
+  class Database
+    extend Forwardable
+
+    def initialize: (string db_file) -> void
+
+    def load: () -> void
+
+    def save: () -> void
+
+    def changed?: () -> bool
+
+    def []: (string key) -> untyped
+
+    def []=: (string key, untyped value) -> void
+
+    def each: () { (string key, untyped value) -> void } -> void
+
+    def has_key?: (string key) -> bool
+  end
+end

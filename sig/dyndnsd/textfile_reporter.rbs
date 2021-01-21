@@ -1,0 +1,17 @@
+module Dyndnsd
+  class TextfileReporter
+    attr_reader file: String
+
+    def initialize: (String file, ?Hash[Symbol, untyped] options) -> void
+
+    def start: () -> void
+
+    def stop: () -> void
+
+    def restart: () -> void
+
+    def write: () -> void
+
+    def write_metric: (File file, String base_name, untyped metric, Array[Symbol] keys, Array[Symbol] snapshot_keys) -> void
+  end
+end
