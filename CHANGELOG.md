@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.3.2
+
+OTHER:
+
+- update to use `docker/build-push-action@v2` for releasing Docker image in GHA
+
 ## 3.3.1 (February 18, 2021)
 
 OTHER:
