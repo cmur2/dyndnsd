@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.3.2
+## 3.3.2 (February 20, 2021)
 
 OTHER:
 
