@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.3.3
+
+OTHER:
+
+- update base of Docker image to Alpine 3.13.4 to fix security vulnerabilities
+
 ## 3.3.2 (February 20, 2021)
 
 OTHER:
