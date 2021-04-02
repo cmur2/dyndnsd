@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.4.0 (April 2, 2021)
+
+IMPROVEMENTS:
+
+- **change** Docker image to run as non-root user `65534` by default, limits attack surface for security and gives OpenShift compatibility
+
 ## 3.3.3 (April 1, 2021)
 
 OTHER:

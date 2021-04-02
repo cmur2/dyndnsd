@@ -12,4 +12,10 @@ RUN apk --no-cache add openssl ca-certificates && \
     cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime && \
     apk del .build-deps
 
+# Follow the principle of least privilege: run as unprivileged user.
+# Running as non-root enables running this image in platforms like OpenShift
+# that do not allow images running as root.
+# User ID 65534 is usually user 'nobody'.
+USER 65534
+
 ENTRYPOINT ["dyndnsd", "/etc/dyndnsd/config.yml"]
