@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.4.1
+
+OTHER:
+
+- update base of Docker image to Alpine 3.13.5 to fix security vulnerabilities
+
 ## 3.4.0 (April 2, 2021)
 
 IMPROVEMENTS:
