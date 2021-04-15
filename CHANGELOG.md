@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.4.1
+## 3.4.1 (April 15, 2021)
 
 OTHER:
 

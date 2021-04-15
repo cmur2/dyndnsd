@@ -2,7 +2,7 @@ FROM alpine:3.13.5
 
 EXPOSE 5353 8080
 
-ARG DYNDNSD_VERSION=3.4.0
+ARG DYNDNSD_VERSION=3.4.1
 
 RUN apk --no-cache add openssl ca-certificates && \
     apk --no-cache add ruby ruby-etc ruby-io-console ruby-json ruby-webrick && \
