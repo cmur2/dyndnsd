@@ -75,7 +75,7 @@ There is an officially maintained [Docker image for dyndnsd](https://hub.docker.
 
 Users can make extensions by deriving from the official Docker image or building their own.
 
-The Docker image consumes the same configuration file in YAML format as the gem, inside the container it needs to be mounted/available as `/etc/dyndnsd/config.yml`. the following YAML should be used as a base and extended with user's settings:
+The Docker image consumes the same configuration file in YAML format as the gem, inside the container it needs to be mounted/available as `/etc/dyndnsd/config.yml`. The following YAML should be used as a base and extended with user's settings:
 
 ```yaml
 host: "0.0.0.0"
@@ -98,7 +98,7 @@ docker run -d --name dyndnsd \
            cmur2/dyndnsd:vX.Y.Z
 ```
 
-*Note*: You may need to expose more then just port 8080 e.g. if you use the `zone_transfer_server` which can be done by appending additional `-p 5353:5353` flags to the `docker run` command.
+*Note*: You may need to expose more than just port 8080 e.g. if you use the `zone_transfer_server` which can be done by appending additional `-p 5353:5353` flags to the `docker run` command.
 
 
 
@@ -106,7 +106,7 @@ docker run -d --name dyndnsd \
 
 By using [DNS zone transfers via AXFR (RFC5936)](https://tools.ietf.org/html/rfc5936) any secondary nameserver can retrieve the DNS zone contents from dyndnsd.rb and serve them to clients.
 To speedup propagation after changes dyndnsd.rb can issue a [DNS NOTIFY (RFC1996)](https://tools.ietf.org/html/rfc1996) to inform the nameserver that the DNS zone contents changed and should be fetched even before the time indicated in the SOA record is up.
-Currently dyndnsd.rb does not support any authentication for incoming DNS zone transfer requests so it should be isolated from the internet on these ports.
+Currently, dyndnsd.rb does not support any authentication for incoming DNS zone transfer request, so it should be isolated from the internet on these ports.
 
 This approach has several advantages:
 - dyndnsd.rb can be used in *hidden primary* fashion isolated from client's DNS traffic and does not need to implement full nameserver features
@@ -151,7 +151,7 @@ users:
 
 NSD is a nice, open source, authoritative-only, low-memory DNS server that reads BIND-style zone files (and converts them into its own database) and has a simple configuration file.
 
-A feature NSD is lacking is the [Dynamic DNS update (RFC2136)](https://tools.ietf.org/html/rfc2136) functionality BIND offers but one can fake it using the following dyndnsd.rb configuration:
+A feature NSD is lacking is the [Dynamic DNS update (RFC2136)](https://tools.ietf.org/html/rfc2136) functionality BIND offers, but one can fake it using the following dyndnsd.rb configuration:
 
 ```yaml
 host: "0.0.0.0"
@@ -197,29 +197,29 @@ The update URL you want to tell your clients (humans or scripts ^^) consists of 
 
 where:
 
-* the protocol depends on your (webserver/proxy) settings
-* USER and PASSWORD are needed for HTTP Basic Auth and valid combinations are defined in your config.yaml
-* DOMAIN should match what you defined in your config.yaml as domain but may be anything else when using a webserver as proxy
-* PORT depends on your (webserver/proxy) settings
-* HOSTNAMES is a required list of comma-separated FQDNs (they all have to end with your config.yaml domain) the user wants to update
-* MYIP is optional and the HTTP client's IP address will be used if missing
-* MYIP6 is optional but if present also requires presence of MYIP
+* the protocol depends on your (web server/proxy) settings
+* `USER` and `PASSWORD` are needed for HTTP Basic Auth and valid combinations are defined in your config.yaml
+* `DOMAIN` should match what you defined in your config.yaml as domain but may be anything else when using a web server as proxy
+* `PORT` depends on your (web server/proxy) settings
+* `HOSTNAMES` is a required list of comma-separated FQDNs (they all have to end with your config.yaml domain) the user wants to update
+* `MYIP` is optional and the HTTP client's IP address will be used if missing
+* `MYIP6` is optional but if present also requires presence of `MYIP`
 
 
 ### IP address determination
 
 The following rules apply:
 
-* use any IP address provided via the myip parameter when present, or
-* use any IP address provided via the X-Real-IP header e.g. when used behind HTTP reverse proxy such as nginx, or
+* use any IP address provided via the `myip` parameter when present, or
+* use any IP address provided via the `X-Real-IP` header e.g. when used behind HTTP reverse proxy such as nginx, or
 * use any IP address used by the connecting HTTP client
 
-If you want to provide an additional IPv6 address as myip6 parameter, the myip parameter containing an IPv4 address has to be present, too! No automatism is applied then.
+If you want to provide an additional IPv6 address as myip6 parameter, the `myip` parameter containing an IPv4 address has to be present, too! No automatism is applied then.
 
 
 ### SSL, multiple listen ports
 
-Use a webserver as a proxy to handle SSL and/or multiple listen addresses and ports. DynDNS.com provides HTTP on port 80 and 8245 and HTTPS on port 443.
+Use a web server as a proxy to handle SSL and/or multiple listen addresses and ports. DynDNS.com provides HTTP on port 80 and 8245 and HTTPS on port 443.
 
 
 ### Startup
@@ -231,7 +231,7 @@ The [Debian 6 init.d script](docs/debian-6-init-dyndnsd) assumes that dyndnsd.rb
 
 ### Monitoring
 
-For monitoring dyndnsd.rb uses the [metriks](https://github.com/eric/metriks) framework and exposes several metrics like the number of unauthenticated requests, requests that did (not) update a hostname, etc. By default the most important metrics are shown in the [proctitle](https://github.com/eric/metriks#proc-title-reporter) but you can also configure a [Graphite](https://graphiteapp.org/) backend for central monitoring or the [textfile_reporter](https://github.com/prometheus/node_exporter/#textfile-collector) which outputs Graphite-style metrics that are also compatible with Prometheus to a file.
+For monitoring dyndnsd.rb uses the [metriks](https://github.com/eric/metriks) framework and exposes several metrics like the number of unauthenticated requests, requests that did (not) update a hostname, etc. By default, the most important metrics are shown in the [proctitle](https://github.com/eric/metriks#proc-title-reporter, butt you can also configure a [Graphite](https://graphiteapp.org/) backend for central monitoring or the [textfile_reporter](https://github.com/prometheus/node_exporter/#textfile-collector) which outputs Graphite-style metrics that are also compatible with Prometheus to a file.
 
 ```yaml
 host: "0.0.0.0"
@@ -273,7 +273,7 @@ users:
 
 For tracing, dyndnsd.rb is instrumented using the [OpenTracing](http://opentracing.io/) framework and will emit span tracing data for the most important operations happening during the request/response cycle. Using a middleware for Rack allows handling incoming OpenTracing span information properly.
 
-Currently only one OpenTracing-compatible tracer implementation named [CNCF Jaeger](https://github.com/jaegertracing/jaeger) can be configured to use with dyndnsd.rb.
+Currently, only one OpenTracing-compatible tracer implementation named [CNCF Jaeger](https://github.com/jaegertracing/jaeger) can be configured to use with dyndnsd.rb.
 
 ```yaml
 host: "0.0.0.0"

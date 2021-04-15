@@ -169,7 +169,7 @@ IMPROVEMENTS:
 
 IMPROVEMENTS:
 
-- Support dropping priviliges on startup, also affects external commands run
+- Support dropping privileges on startup, also affects external commands run
 - Add [metriks](https://github.com/eric/metriks) support for basic metrics in the process title
 - Detach from child processes running external commands to avoid zombie processes
 
