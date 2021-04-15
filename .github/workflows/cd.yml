@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+
+    - run: sleep 30
+
     - name: Extract dyndnsd version from tag name
       run: |
         echo "DYNDNSD_VERSION=${GITHUB_REF#refs/*/v}" >> $GITHUB_ENV
