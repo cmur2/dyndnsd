@@ -27,6 +27,7 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true  # runs 'bundle install' and caches installed gems automatically
+
     - name: Lint and Test
       run: |
         bundle exec rake ci
@@ -38,4 +39,5 @@ jobs:
     - name: Test building Docker image for dyndnsd
       uses: docker/build-push-action@v2
       with:
-        context: docker
+        context: .
+        file: docker/ci/Dockerfile

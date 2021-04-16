@@ -29,4 +29,4 @@ end
 task default: [:rubocop, :spec, 'bundle:audit', :solargraph]
 
 desc 'Run all tasks desired for CI'
-task ci: ['solargraph:init', :default, :hadolint]
+task ci: ['solargraph:init', :default, :hadolint, :build]
