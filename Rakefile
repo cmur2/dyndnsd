@@ -22,7 +22,7 @@ namespace :solargraph do
 end
 
 # renovate: datasource=github-tags depName=hadolint/hadolint
-hadolint_version = 'v1.18.0'
+hadolint_version = 'v2.1.0'
 
 desc 'Run hadolint for Dockerfile linting'
 task :hadolint do
