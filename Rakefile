@@ -21,9 +21,12 @@ namespace :solargraph do
   end
 end
 
+# renovate: datasource=github-tags depName=hadolint/hadolint
+hadolint_version = 'v1.18.0'
+
 desc 'Run hadolint for Dockerfile linting'
 task :hadolint do
-  sh 'docker run --rm -i hadolint/hadolint:v1.18.0 hadolint --ignore DL3018 - < docker/Dockerfile'
+  sh "docker run --rm -i hadolint/hadolint:#{hadolint_version} hadolint --ignore DL3018 - < docker/Dockerfile"
 end
 
 task default: [:rubocop, :spec, 'bundle:audit', :solargraph]

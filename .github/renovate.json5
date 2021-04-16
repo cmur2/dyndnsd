@@ -1,0 +1,39 @@
+{
+  extends: [
+    "config:base",
+    ":dependencyDashboard",
+    ":prHourlyLimitNone",
+    ":prConcurrentLimitNone",
+    ":label(dependency-upgrade)",
+  ],
+  schedule: ["before 8am on thursday"],
+  branchPrefix: "renovate-",
+  commitMessagePrefix: "project: ",
+  commitMessageAction: "update",
+  commitMessageTopic: "{{depName}}",
+  commitMessageExtra: "to {{#if isSingleVersion}}v{{{newVersion}}}{{else}}{{{newValue}}}{{/if}}",
+  packageRules: [
+    // Ruby dependencies are managed by depfu
+    {
+      managers: ["bundler"],
+      enabled: false,
+    },
+    // Commit message formats
+    {
+      datasources: ["docker"],
+      commitMessagePrefix: "docker: ",
+    },
+    {
+      datasources: ["github-actions"],
+      commitMessagePrefix: "ci: ",
+    },
+  ],
+  regexManagers: [
+    {
+      fileMatch: ["\.rb$", "^Rakefile$"],
+      matchStrings: [
+        "renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\s.*_version = '(?<currentValue>.*)'\\s"
+      ]
+    },
+  ],
+}
