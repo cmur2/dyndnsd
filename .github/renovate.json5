@@ -15,16 +15,16 @@
   packageRules: [
     // Ruby dependencies are managed by depfu
     {
-      managers: ["bundler"],
+      matchManagers: ["bundler"],
       enabled: false,
     },
     // Commit message formats
     {
-      datasources: ["docker"],
+      matchDatasources: ["docker"],
       commitMessagePrefix: "docker: ",
     },
     {
-      datasources: ["github-actions"],
+      matchDatasources: ["github-actions"],
       commitMessagePrefix: "ci: ",
     },
   ],
