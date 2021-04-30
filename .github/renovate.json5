@@ -8,6 +8,7 @@
   ],
   schedule: ["before 8am on thursday"],
   branchPrefix: "renovate-",
+  dependencyDashboardHeader: "View repository job log [here](https://app.renovatebot.com/dashboard#github/cmur2/dyndnsd).",
   commitMessagePrefix: "project: ",
   commitMessageAction: "update",
   commitMessageTopic: "{{depName}}",
