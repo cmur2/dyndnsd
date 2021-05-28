@@ -28,11 +28,11 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.5'
 
   s.add_runtime_dependency 'async-dns', '~> 1.2.0'
-  s.add_runtime_dependency 'jaeger-client', '~> 1.1.0'
   s.add_runtime_dependency 'metriks'
-  s.add_runtime_dependency 'opentracing', '~> 0.5.0'
+  s.add_runtime_dependency 'opentelemetry-exporter-jaeger', '~> 0.18.0'
+  s.add_runtime_dependency 'opentelemetry-instrumentation-rack', '~> 0.18.0'
+  s.add_runtime_dependency 'opentelemetry-sdk', '~> 1.0.0.rc1'
   s.add_runtime_dependency 'rack', '~> 2.0'
-  s.add_runtime_dependency 'rack-tracer', '~> 0.9.0'
   s.add_runtime_dependency 'webrick', '>= 1.6.1'
 
   s.add_development_dependency 'bundler'

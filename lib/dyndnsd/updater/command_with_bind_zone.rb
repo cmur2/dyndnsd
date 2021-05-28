@@ -18,7 +18,7 @@ module Dyndnsd
         return if !db.changed?
 
         Helper.span('updater_update') do |span|
-          span.set_tag('dyndnsd.updater.name', self.class.name&.split('::')&.last || 'None')
+          span.set_attribute('dyndnsd.updater.name', self.class.name&.split('::')&.last || 'None')
 
           # write zone file in bind syntax
           File.open(@zone_file, 'w') { |f| f.write(@generator.generate(db)) }

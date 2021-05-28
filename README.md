@@ -271,9 +271,9 @@ users:
 
 ### Tracing (experimental)
 
-For tracing, dyndnsd.rb is instrumented using the [OpenTracing](http://opentracing.io/) framework and will emit span tracing data for the most important operations happening during the request/response cycle. Using a middleware for Rack allows handling incoming OpenTracing span information properly.
+For tracing, dyndnsd.rb is instrumented using the [OpenTelemetry](https://opentelemetry.io/docs/ruby/) framework and will emit span tracing data for the most important operations happening during the request/response cycle. Using an [instrumentation for Rack](https://github.com/open-telemetry/opentelemetry-ruby/tree/main/instrumentation/rack) allows handling incoming OpenTelemetry parent span information properly (when desired, turned off by default to reduce attack surface).
 
-Currently, only one OpenTracing-compatible tracer implementation named [CNCF Jaeger](https://github.com/jaegertracing/jaeger) can be configured to use with dyndnsd.rb.
+Currently, the [OpenTelemetry trace exporter](https://github.com/open-telemetry/opentelemetry-ruby/tree/main/exporter/jaeger) for [CNCF Jaeger](https://github.com/jaegertracing/jaeger) can be enabled via dyndnsd.rb configuration. Alternatively, you can also enable other exporters via the environment variable `OTEL_TRACES_EXPORTER`, e.g. `OTEL_TRACES_EXPORTER=console`.
 
 ```yaml
 host: "0.0.0.0"
@@ -282,11 +282,9 @@ db: "/opt/dyndnsd/db.json"
 domain: "dyn.example.org"
 # enable and configure tracing using the (currently only) tracer jaeger
 tracing:
-  trust_incoming_span: false # default value, change to accept incoming OpenTracing spans as parents
-  jaeger:
-    host: 127.0.0.1 # defaults for host and port of local jaeger-agent
-    port: 6831
-    service_name: "my.dyndnsd.identifier"
+  trust_incoming_span: false # default value, change to accept incoming OpenTelemetry spans as parents
+  service_name: "my.dyndnsd.identifier" # default unset, will be populated by OpenTelemetry
+  jaeger: true # enables the Jaeger AgentExporter
 # configure the updater, here we use command_with_bind_zone, params are updater-specific
 updater:
   name: "command_with_bind_zone"

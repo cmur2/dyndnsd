@@ -45,24 +45,17 @@ module Dyndnsd
     # @param block [Proc]
     # @return [void]
     def self.span(operation, &block)
-      scope = OpenTracing.start_active_span(operation)
-      span = scope.span
-      span.set_tag('component', 'dyndnsd')
-      span.set_tag('span.kind', 'server')
-      begin
+      tracer = OpenTelemetry.tracer_provider.tracer(Dyndnsd.name, Dyndnsd::VERSION)
+      tracer.in_span(
+        operation,
+        attributes: {'component' => 'dyndnsd'},
+        kind: :server
+      ) do |span|
+        Dyndnsd.logger.debug "Creating span ID #{span.context.hex_span_id} for trace ID #{span.context.hex_trace_id}"
         block.call(span)
       rescue StandardError => e
-        span.set_tag('error', true)
-        span.log_kv(
-          event: 'error',
-          'error.kind': e.class.to_s,
-          'error.object': e,
-          message: e.message,
-          stack: e.backtrace&.join("\n") || ''
-        )
+        span.record_exception(e)
         raise e
-      ensure
-        scope.close
       end
     end
   end
