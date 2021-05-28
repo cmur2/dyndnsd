@@ -35,7 +35,7 @@ module Dyndnsd
       # @return [void]
       def update(db)
         Helper.span('updater_update') do |span|
-          span.set_tag('dyndnsd.updater.name', self.class.name&.split('::')&.last || 'None')
+          span.set_attribute('dyndnsd.updater.name', self.class.name&.split('::')&.last || 'None')
 
           soa_rr = Resolv::DNS::Resource::IN::SOA.new(
             @zone_nameservers[0], @zone_email_address,

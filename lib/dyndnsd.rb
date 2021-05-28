@@ -8,9 +8,9 @@ require 'json'
 require 'yaml'
 require 'rack'
 require 'metriks'
+require 'opentelemetry/instrumentation/rack'
+require 'opentelemetry/sdk'
 require 'metriks/reporter/graphite'
-require 'opentracing'
-require 'rack/tracer'
 
 require 'dyndnsd/generator/bind'
 require 'dyndnsd/updater/command_with_bind_zone'
@@ -69,7 +69,7 @@ module Dyndnsd
     # @return [Boolean]
     def authorized?(username, password)
       Helper.span('check_authorized') do |span|
-        span.set_tag('dyndnsd.user', username)
+        span.set_attribute('enduser.id', username)
 
         allow = Helper.user_allowed?(username, password, @users)
         if !allow
@@ -170,7 +170,7 @@ module Dyndnsd
     def process_changes(hostnames, myips)
       changes = []
       Helper.span('process_changes') do |span|
-        span.set_tag('dyndnsd.hostnames', hostnames.join(','))
+        span.set_attribute('dyndnsd.hostnames', hostnames.join(','))
 
         hostnames.each do |hostname|
           # myips order is always deterministic
@@ -252,6 +252,8 @@ module Dyndnsd
       Dyndnsd.logger.progname = 'dyndnsd'
       Dyndnsd.logger.formatter = LogFormatter.new
       Dyndnsd.logger.level = config['debug'] ? Logger::DEBUG : Logger::INFO
+
+      OpenTelemetry.logger = Dyndnsd.logger
     end
 
     # @return [void]
@@ -296,16 +298,31 @@ module Dyndnsd
     # @param config [Hash{String => Object}]
     # @return [void]
     private_class_method def self.setup_tracing(config)
-      # configure OpenTracing
-      if config.dig('tracing', 'jaeger')
-        require 'jaeger/client'
+      # by default do not try to emit any traces until the user opts in
+      ENV['OTEL_TRACES_EXPORTER'] ||= 'none'
 
-        host = config['tracing']['jaeger']['host'] || '127.0.0.1'
-        port = config['tracing']['jaeger']['port'] || 6831
-        service_name = config['tracing']['jaeger']['service_name'] || 'dyndnsd'
-        OpenTracing.global_tracer = Jaeger::Client.build(
-          host: host, port: port, service_name: service_name, flush_interval: 1
-        )
+      # configure OpenTelemetry
+      OpenTelemetry::SDK.configure do |c|
+        if config.dig('tracing', 'jaeger')
+          require 'opentelemetry/exporter/jaeger'
+
+          c.add_span_processor(
+            OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(
+              OpenTelemetry::Exporter::Jaeger::AgentExporter.new
+            )
+          )
+        end
+
+        if config.dig('tracing', 'service_name')
+          c.service_name = config['tracing']['service_name']
+        end
+
+        c.service_version = Dyndnsd::VERSION
+        c.use('OpenTelemetry::Instrumentation::Rack')
+      end
+
+      if !config.dig('tracing', 'trust_incoming_span')
+        OpenTelemetry.propagation = OpenTelemetry::Context::Propagation::NoopTextMapPropagator.new
       end
     end
 
@@ -331,8 +348,7 @@ module Dyndnsd
         app = Responder::DynDNSStyle.new(app)
       end
 
-      trust_incoming_span = config.dig('tracing', 'trust_incoming_span') || false
-      app = Rack::Tracer.new(app, trust_incoming_span: trust_incoming_span)
+      app = OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware.new(app)
 
       Rack::Handler::WEBrick.run app, Host: config['host'], Port: config['port']
     end
