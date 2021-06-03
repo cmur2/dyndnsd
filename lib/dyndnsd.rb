@@ -112,7 +112,7 @@ module Dyndnsd
 
       Dyndnsd.logger.info 'Starting...'
 
-      # drop priviliges as soon as possible
+      # drop privileges as soon as possible
       # NOTE: first change group than user
       if config['group']
         group = Etc.getgrnam(config['group'])
