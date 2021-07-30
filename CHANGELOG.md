@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.4.2 (July 30, 2021)
+
+IMPROVEMENTS:
+
+- move from OpenTracing to OpenTelemetry for experimental tracing feature
+
+OTHER:
+
+- re-release 3.4.1 to rebuild Docker image with security vulnerabilities fixes
+- adopt Renovate for dependency updates
+
 ## 3.4.1 (April 15, 2021)
 
 OTHER:
