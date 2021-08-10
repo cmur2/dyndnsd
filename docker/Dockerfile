@@ -4,7 +4,7 @@ EXPOSE 5353 8080
 
 ARG DYNDNSD_VERSION
 
-RUN apk --no-cache add openssl ca-certificates && \
+RUN apk --no-cache add openssl ca-certificates apk-tools && \
     apk --no-cache add ruby ruby-etc ruby-io-console ruby-json ruby-webrick && \
     apk --no-cache add --virtual .build-deps linux-headers ruby-dev build-base tzdata && \
     gem install --no-document dyndnsd -v ${DYNDNSD_VERSION} && \
