@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.4.4
+
+OTHER:
+
+- re-release 3.4.3 to rebuild Docker image with security vulnerabilities fixes
+
 ## 3.4.3 (August 20th, 2021)
 
 OTHER:
