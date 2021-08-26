@@ -26,7 +26,7 @@ hadolint_version = 'v2.7.0'
 
 desc 'Run hadolint for Dockerfile linting'
 task :hadolint do
-  sh "docker run --rm -i hadolint/hadolint:#{hadolint_version} hadolint --ignore DL3017 --ignore DL3018 - < docker/Dockerfile"
+  sh "docker run --rm -i hadolint/hadolint:#{hadolint_version} hadolint --ignore DL3018 - < docker/Dockerfile"
 end
 
 task default: [:rubocop, :spec, 'bundle:audit', :solargraph]
