@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.4.4
+## 3.4.4 (August 26th, 2021)
 
 OTHER:
 
