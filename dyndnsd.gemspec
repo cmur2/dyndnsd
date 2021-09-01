@@ -36,7 +36,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'webrick', '>= 1.6.1'
 
   s.add_development_dependency 'bundler'
-  s.add_development_dependency 'bundler-audit', '~> 0.8.0'
+  s.add_development_dependency 'bundler-audit', '~> 0.9.0'
   s.add_development_dependency 'rack-test'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec'
