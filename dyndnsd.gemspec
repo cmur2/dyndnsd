@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.5'
 
-  s.add_runtime_dependency 'async-dns', '~> 1.2.0'
+  s.add_runtime_dependency 'async-dns', '~> 1.3.0'
   s.add_runtime_dependency 'metriks'
   s.add_runtime_dependency 'opentelemetry-exporter-jaeger', '~> 0.20.0'
   s.add_runtime_dependency 'opentelemetry-instrumentation-rack', '~> 0.19.0'
