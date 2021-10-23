@@ -26,7 +26,9 @@ hadolint_version = 'v2.7.0'
 
 desc 'Run hadolint for Dockerfile linting'
 task :hadolint do
-  sh "docker run --rm -i hadolint/hadolint:#{hadolint_version} hadolint --ignore DL3018 - < docker/Dockerfile"
+  sh "wget -q -O ./hadolint https://github.com/hadolint/hadolint/releases/download/#{hadolint_version}/hadolint-Linux-x86_64"
+  sh 'chmod a+x ./hadolint'
+  sh './hadolint --ignore DL3018 docker/Dockerfile'
 end
 
 task default: [:rubocop, :spec, 'bundle:audit', :solargraph]
