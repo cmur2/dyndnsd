@@ -6,6 +6,9 @@ AllCops:
   TargetRubyVersion: '2.5'
   NewCops: enable
 
+Gemspec/RequireMFA:
+  Enabled: false
+
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
 
