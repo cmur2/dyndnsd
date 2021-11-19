@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.4.6
+## 3.4.6 (November 19th, 2021)
 
 OTHER:
 
