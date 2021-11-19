@@ -2,3 +2,4 @@
 *.lock
 pkg/*
 .yardoc
+hadolint
