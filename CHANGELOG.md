@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.4.7
+
+OTHER:
+
+- re-release 3.4.6 to rebuild Docker image with security vulnerabilities fixes
+
 ## 3.4.6 (November 19th, 2021)
 
 OTHER:
