@@ -24,14 +24,32 @@ end
 # renovate: datasource=github-tags depName=hadolint/hadolint
 hadolint_version = 'v2.8.0'
 
-desc 'Run hadolint for Dockerfile linting'
-task :hadolint do
-  sh "wget -q -O ./hadolint https://github.com/hadolint/hadolint/releases/download/#{hadolint_version}/hadolint-Linux-x86_64"
-  sh 'chmod a+x ./hadolint'
-  sh './hadolint --ignore DL3018 docker/Dockerfile'
+# renovate: datasource=github-tags depName=aquasecurity/trivy
+trivy_version = 'v0.21.2'
+
+namespace :docker do
+  desc 'Lint Dockerfile'
+  task :lint do
+    sh "if [ ! -e ./hadolint ]; then wget -q -O ./hadolint https://github.com/hadolint/hadolint/releases/download/#{hadolint_version}/hadolint-Linux-x86_64; fi"
+    sh 'chmod a+x ./hadolint'
+    sh './hadolint --ignore DL3018 docker/Dockerfile'
+    sh './hadolint --ignore DL3018 --ignore DL3028 docker/ci/Dockerfile'
+  end
+
+  desc 'Build CI Docker image'
+  task :build do
+    sh 'docker build -t cmur2/dyndnsd:ci -f docker/ci/Dockerfile .'
+  end
+
+  desc 'Scan CI Docker image for vulnerabilities'
+  task :scan do
+    ver = trivy_version.gsub('v', '')
+    sh "if [ ! -e ./trivy ]; then wget -q -O - https://github.com/aquasecurity/trivy/releases/download/v#{ver}/trivy_#{ver}_Linux-64bit.tar.gz | tar -xzf - trivy; fi"
+    sh './trivy cmur2/dyndnsd:ci'
+  end
 end
 
 task default: [:rubocop, :spec, 'bundle:audit', :solargraph]
 
 desc 'Run all tasks desired for CI'
-task ci: ['solargraph:init', :default, :hadolint, :build]
+task ci: ['solargraph:init', :default, 'docker:lint', :build, 'docker:build']
