@@ -1,0 +1,31 @@
+---
+host: "0.0.0.0"
+port: 8080
+
+db: /etc/dyndnsd/db.json
+debug: false
+domain: dyn.example.org
+#responder: RestStyle
+
+updater:
+  name: zone_transfer_server
+  params:
+    server_listens:
+    - 0.0.0.0@5353
+    #send_notifies:
+    #- 10.0.2.15@53
+    zone_ttl: 300  # 5m
+    zone_nameservers:
+    - dns1.example.org.
+    - dns2.example.org.
+    zone_email_address: admin.example.org.
+    zone_additional_ips:
+    - "127.0.0.1"
+    - "::1"
+
+users:
+  foo:
+    password: "secret"
+    hosts:
+    - foo.dyn.example.org
+    - bar.dyn.example.org
