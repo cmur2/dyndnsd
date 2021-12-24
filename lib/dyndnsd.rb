@@ -106,7 +106,7 @@ module Dyndnsd
       puts "DynDNSd version #{Dyndnsd::VERSION}"
       puts "Using config file #{config_file}"
 
-      config = YAML.safe_load(File.open(config_file, 'r', &:read))
+      config = YAML.safe_load(File.read(config_file))
 
       setup_logger(config)
 
