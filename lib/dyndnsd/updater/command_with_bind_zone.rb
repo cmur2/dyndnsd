@@ -21,7 +21,7 @@ module Dyndnsd
           span.set_attribute('dyndnsd.updater.name', self.class.name&.split('::')&.last || 'None')
 
           # write zone file in bind syntax
-          File.open(@zone_file, 'w') { |f| f.write(@generator.generate(db)) }
+          File.write(@zone_file, @generator.generate(db))
           # call user-defined command
           pid = fork do
             exec @command
