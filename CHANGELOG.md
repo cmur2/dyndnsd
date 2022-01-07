@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.0
+
+IMPROVEMENTS:
+
+- Add Ruby 3.1 support
+
 ## 3.4.8 (December 11th, 2021)
 
 OTHER:
