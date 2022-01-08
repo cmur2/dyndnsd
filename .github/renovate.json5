@@ -20,12 +20,6 @@
       matchManagers: ["bundler"],
       enabled: false,
     },
-    // prevent minor updates to Alpine 3.14 due to https://wiki.alpinelinux.org/wiki/Release_Notes_for_Alpine_3.14.0#faccessat2
-    {
-      matchManagers: ["dockerfile"],
-      matchUpdateTypes: ["minor"],
-      enabled: false,
-    },
     // Commit message formats
     {
       matchDatasources: ["docker"],
