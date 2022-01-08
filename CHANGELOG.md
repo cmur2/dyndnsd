@@ -4,7 +4,11 @@
 
 IMPROVEMENTS:
 
-- Add Ruby 3.1 support
+- add Ruby 3.1 support
+
+OTHER:
+
+- update base of Docker image to Alpine 3.15 (from 3.13.7 before, **Note:** please be aware of the quirks around [Alpine 3.14](https://wiki.alpinelinux.org/wiki/Release_Notes_for_Alpine_3.14.0#faccessat2))
 
 ## 3.4.8 (December 11th, 2021)
 
