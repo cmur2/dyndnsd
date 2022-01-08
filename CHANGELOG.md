@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.5.0
+## 3.5.0 (January 8, 2021)
 
 IMPROVEMENTS:
 
