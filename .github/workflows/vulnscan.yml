@@ -10,7 +10,6 @@ jobs:
   scan-released-dockerimages:
     runs-on: ubuntu-latest
     env:
-      TRIVY_LIGHT: 'true'
       TRIVY_IGNORE_UNFIXED: 'true'
       TRIVY_REMOVED_PKGS: 'true'
     steps:
