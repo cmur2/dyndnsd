@@ -15,7 +15,7 @@ jobs:
 
     - name: Extract dyndnsd version from tag name
       run: |
-        echo "DYNDNSD_VERSION=${GITHUB_REF#refs/*/v}" >> $GITHUB_ENV
+        echo "DYNDNSD_VERSION=${GITHUB_REF#refs/*/v}" >> "$GITHUB_ENV"
 
     - name: Wait for dyndnsd ${{ env.DYNDNSD_VERSION }} gem to be available
       run: |
@@ -23,6 +23,7 @@ jobs:
         for retry in $(seq 1 5); do
           echo "Checking if dyndnsd $DYNDNSD_VERSION gem is retrievable from rubygems.org (try #$retry)..."
           sudo gem install dyndnsd -v "$DYNDNSD_VERSION"
+          # shellcheck disable=SC2181
           if [ $? -eq 0 ]; then
             exit 0
           fi

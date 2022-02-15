@@ -33,3 +33,13 @@ jobs:
     - name: Lint and Test
       run: |
         bundle exec rake ci
+
+  actionlint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check workflow files
+      run: |
+        echo "::add-matcher::.github/actionlint-matcher.json"
+        bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+        ./actionlint
