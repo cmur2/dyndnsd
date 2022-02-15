@@ -16,9 +16,9 @@ jobs:
     steps:
     - name: Install Trivy
       run: |
-        mkdir -p $GITHUB_WORKSPACE/bin
+        mkdir -p "$GITHUB_WORKSPACE/bin"
         echo "$GITHUB_WORKSPACE/bin" >> "$GITHUB_PATH"
-        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/master/contrib/install.sh | sh -s -- -b $GITHUB_WORKSPACE/bin
+        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/master/contrib/install.sh | sh -s -- -b "$GITHUB_WORKSPACE/bin"
     - name: Download Trivy DB
       run: |
         trivy image --download-db-only
