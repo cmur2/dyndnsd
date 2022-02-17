@@ -1,6 +1,12 @@
 # Changelog
 
-## 3.5.0 (January 8, 2021)
+## 3.5.1 (February 17th, 2022)
+
+OTHER:
+
+- re-release 3.5.0 to rebuild Docker image with security vulnerabilities fixes
+
+## 3.5.0 (January 8th, 2022)
 
 IMPROVEMENTS:
 
