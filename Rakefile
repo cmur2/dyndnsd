@@ -47,7 +47,7 @@ namespace :docker do
   task :scan do
     ver = trivy_version.gsub('v', '')
     sh "if [ ! -e ./trivy ]; then wget -q -O - https://github.com/aquasecurity/trivy/releases/download/v#{ver}/trivy_#{ver}_Linux-64bit.tar.gz | tar -xzf - trivy; fi"
-    sh "./trivy #{ci_image}"
+    sh "./trivy image #{ci_image}"
   end
 
   desc 'End-to-end test the CI Docker image'
