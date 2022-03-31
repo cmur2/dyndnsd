@@ -22,7 +22,7 @@ namespace :solargraph do
 end
 
 # renovate: datasource=github-tags depName=hadolint/hadolint
-hadolint_version = 'v2.9.2'
+hadolint_version = 'v2.9.3'
 
 # renovate: datasource=github-tags depName=aquasecurity/trivy
 trivy_version = 'v0.24.4'
