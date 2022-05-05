@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.3 (May 5th, 2022)
+
+OTHER:
+
+- re-release 3.5.2 to rebuild Docker image with security vulnerabilities fixes
+
 ## 3.5.2 (April 7th, 2022)
 
 OTHER:
