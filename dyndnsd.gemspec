@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.executables = ['dyndnsd']
   s.extra_rdoc_files = Dir['README.md', 'CHANGELOG.md', 'LICENSE']
 
-  s.required_ruby_version = '>= 2.5'
+  s.required_ruby_version = '>= 2.7'
 
   s.add_runtime_dependency 'async', '~> 1.30.0'
   s.add_runtime_dependency 'async-dns', '~> 1.3.0'
