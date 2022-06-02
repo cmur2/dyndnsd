@@ -1,10 +1,14 @@
 # Changelog
 
-## 3.6.0
+## 3.6.0 (June 2nd, 2022)
 
 IMPROVEMENTS:
 
 - Drop EOL Ruby 2.6 and lower support, now minimum version supported is Ruby 2.7
+
+OTHER:
+
+- update base of Docker image to Alpine 3.16 (from 3.15.7 before)
 
 ## 3.5.3 (May 5th, 2022)
 
