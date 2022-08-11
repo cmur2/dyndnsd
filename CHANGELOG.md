@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.6.2 (August 11th, 2022)
+
+OTHER:
+
+- update base of Docker image to Alpine 3.16.2 (from 3.16.1 before)
+
 ## 3.6.1 (July 21st, 2022)
 
 OTHER:
