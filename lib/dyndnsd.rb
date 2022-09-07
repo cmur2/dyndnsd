@@ -7,6 +7,7 @@ require 'ipaddr'
 require 'json'
 require 'yaml'
 require 'rack'
+require 'rackup'
 require 'metriks'
 require 'opentelemetry/instrumentation/rack'
 require 'opentelemetry/sdk'
@@ -350,7 +351,7 @@ module Dyndnsd
 
       app = OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware.new(app)
 
-      Rack::Handler::WEBrick.run app, Host: config['host'], Port: config['port']
+      Rackup::Handler::WEBrick.run app, Host: config['host'], Port: config['port']
     end
   end
 end

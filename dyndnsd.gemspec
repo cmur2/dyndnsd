@@ -33,7 +33,8 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'opentelemetry-exporter-jaeger', '~> 0.21.0'
   s.add_runtime_dependency 'opentelemetry-instrumentation-rack', '~> 0.20.0'
   s.add_runtime_dependency 'opentelemetry-sdk', '~> 1.0.0.rc2'
-  s.add_runtime_dependency 'rack', '~> 2.0'
+  s.add_runtime_dependency 'rack', '~> 3.0'
+  s.add_runtime_dependency 'rackup'
   s.add_runtime_dependency 'webrick', '>= 1.6.1'
 
   s.add_development_dependency 'bundler'
