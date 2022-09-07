@@ -7,6 +7,7 @@ require 'ipaddr'
 require 'json'
 require 'yaml'
 require 'rack'
+require 'rackup'
 require 'metriks'
 require 'opentelemetry/instrumentation/rack'
 require 'opentelemetry/sdk'
@@ -259,10 +260,10 @@ module Dyndnsd
     # @return [void]
     private_class_method def self.setup_traps
       Signal.trap('INT') do
-        Rack::Handler::WEBrick.shutdown
+        Rackup::Handler::WEBrick.shutdown
       end
       Signal.trap('TERM') do
-        Rack::Handler::WEBrick.shutdown
+        Rackup::Handler::WEBrick.shutdown
       end
     end
 
@@ -350,7 +351,7 @@ module Dyndnsd
 
       app = OpenTelemetry::Instrumentation::Rack::Middlewares::TracerMiddleware.new(app)
 
-      Rack::Handler::WEBrick.run app, Host: config['host'], Port: config['port']
+      Rackup::Handler::WEBrick.run app, Host: config['host'], Port: config['port']
     end
   end
 end
