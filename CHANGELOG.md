@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.7.0
+
+IMPROVEMENTS:
+
+- Update to Rack 3
+
 ## 3.6.2 (August 11th, 2022)
 
 OTHER:
