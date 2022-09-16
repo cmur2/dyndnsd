@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.7.0
+## 3.7.0 (September 16th, 2022)
 
 IMPROVEMENTS:
 
