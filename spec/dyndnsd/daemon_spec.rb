@@ -15,6 +15,9 @@ describe Dyndnsd::Daemon do
         'test' => {
           'password' => 'secret',
           'hosts' => ['foo.example.org', 'bar.example.org']
+        },
+        'test2' => {
+          'password' => 'ihavenohosts'
         }
       }
     }
@@ -97,6 +100,14 @@ describe Dyndnsd::Daemon do
     get '/nic/update?hostname=valid.example.org,in.valid.example.org'
     expect(last_response).to be_ok
     expect(last_response.body).to eq('notfqdn')
+  end
+
+  it 'rejects request if user does not own any hostnames' do
+    authorize 'test2', 'ihavenohosts'
+
+    get '/nic/update?hostname=doesnotexisthost.example.org'
+    expect(last_response).to be_ok
+    expect(last_response.body).to eq('nohost')
   end
 
   it 'rejects request if user does not own one hostname' do

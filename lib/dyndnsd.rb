@@ -215,10 +215,11 @@ module Dyndnsd
       invalid_hostnames = hostnames.select { |h| !Helper.fqdn_valid?(h, @domain) }
       return [422, {'X-DynDNS-Response' => 'hostname_malformed'}, []] if invalid_hostnames.any?
 
+      # we can trust this information since user was authorized by middleware
       user = env['REMOTE_USER']
 
       # check for hostnames that the user does not own
-      forbidden_hostnames = hostnames - @users[user]['hosts']
+      forbidden_hostnames = hostnames - @users[user].fetch('hosts', [])
       return [422, {'X-DynDNS-Response' => 'host_forbidden'}, []] if forbidden_hostnames.any?
 
       if params['offline'] == 'YES'

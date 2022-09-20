@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.7.1
+
+IMPROVEMENTS:
+
+- fix [TypeError](https://github.com/cmur2/dyndnsd/issues/205) when user has no hosts configured
+
 ## 3.7.0 (September 16th, 2022)
 
 IMPROVEMENTS:
