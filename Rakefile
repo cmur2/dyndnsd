@@ -25,7 +25,7 @@ end
 hadolint_version = 'v2.10.0'
 
 # renovate: datasource=github-tags depName=aquasecurity/trivy
-trivy_version = 'v0.32.1'
+trivy_version = 'v0.33.0'
 
 namespace :docker do
   ci_image = 'cmur2/dyndnsd:ci'
