@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.7.2 (November 10th, 2022)
+
+OTHER:
+
+- re-release 3.7.1 to rebuild Docker image with security vulnerabilities fixes
+
 ## 3.7.1 (September 20th, 2022)
 
 IMPROVEMENTS:
