@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.8.0
+
+IMPROVEMENTS:
+
+- add Ruby 3.2 support
+
 ## 3.7.3 (December 29th, 2022)
 
 OTHER:
