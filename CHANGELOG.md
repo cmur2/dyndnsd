@@ -1,10 +1,14 @@
 # Changelog
 
-## 3.8.0
+## 3.8.0 (January 13th, 2023)
 
 IMPROVEMENTS:
 
 - add Ruby 3.2 support
+
+OTHER:
+
+- update base of Docker image to Alpine 3.17.1 (from 3.17.0 before)
 
 ## 3.7.3 (December 29th, 2022)
 
