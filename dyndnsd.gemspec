@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'opentelemetry-instrumentation-rack', '~> 0.22.0'
   s.add_runtime_dependency 'opentelemetry-sdk', '~> 1.2.0'
   s.add_runtime_dependency 'rack', '~> 3.0'
-  s.add_runtime_dependency 'rackup'
+  s.add_runtime_dependency 'rackup', '1.0.0'
   s.add_runtime_dependency 'webrick', '>= 1.6.1'
 
   s.add_development_dependency 'bundler'
