@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.8.1 (March 2nd, 2023)
+
+OTHER:
+
+- update base of Docker image to Alpine 3.17.2 (from 3.17.1 before)
+
 ## 3.8.0 (January 13th, 2023)
 
 IMPROVEMENTS:
