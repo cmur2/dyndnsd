@@ -42,7 +42,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rack-test'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec'
-  s.add_development_dependency 'rubocop', '~> 1.47.0'
+  s.add_development_dependency 'rubocop', '~> 1.48.0'
   s.add_development_dependency 'rubocop-rake', '~> 0.6.0'
   s.add_development_dependency 'rubocop-rspec', '~> 2.18.0'
   s.add_development_dependency 'solargraph', '~> 0.48.0'
