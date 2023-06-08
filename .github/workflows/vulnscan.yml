@@ -36,7 +36,7 @@ jobs:
           for image in $ALL_IMAGES; do
             if [[ "$image" = cmur2/dyndnsd:v$major_version.* ]]; then
               echo -e "\nScanning newest patch release $image of major v$major_version...\n"
-              if ! trivy image --skip-update --exit-code 1 "$image"; then
+              if ! trivy image --skip-db-update --scanners vuln --exit-code 1 "$image"; then
                 EXIT_CODE=1
               fi
               break
