@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.9.0
+
+IMPROVEMENTS:
+
+- Drop EOL Ruby 2.7 support, now minimum version supported is Ruby 3.0
+
 ## 3.8.2 (April 1st, 2023)
 
 OTHER:
