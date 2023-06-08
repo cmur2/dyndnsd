@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.9.0
+## 3.9.0 (June 8, 2023)
 
 IMPROVEMENTS:
 
