@@ -71,4 +71,4 @@ end
 task default: [:rubocop, :spec, 'bundle:audit', :solargraph]
 
 desc 'Run all tasks desired for CI'
-task ci: [ :default, 'docker:lint', :build, 'docker:build', 'docker:e2e']
+task ci: [:default, 'docker:lint', :build, 'docker:build', 'docker:e2e']
