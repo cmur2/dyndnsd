@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.10.0
+## 3.10.0 (January 18th, 2024)
 
 IMPROVEMENTS:
 
