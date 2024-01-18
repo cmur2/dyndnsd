@@ -42,3 +42,11 @@ jobs:
         echo "::add-matcher::.github/actionlint-matcher.json"
         bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
         ./actionlint
+
+  reviewdog:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: errata-ai/vale-action@reviewdog
+      with:
+        fail_on_error: true
