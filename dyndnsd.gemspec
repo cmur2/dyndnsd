@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'async-dns', '~> 1.3.0'
   s.add_runtime_dependency 'metriks'
   s.add_runtime_dependency 'opentelemetry-exporter-jaeger', '~> 0.22.0'
-  s.add_runtime_dependency 'opentelemetry-instrumentation-rack', '~> 0.22.0'
+  s.add_runtime_dependency 'opentelemetry-instrumentation-rack', '~> 0.24.1'
   s.add_runtime_dependency 'opentelemetry-sdk', '~> 1.2.0'
   s.add_runtime_dependency 'rack', '~> 3.0'
   s.add_runtime_dependency 'rackup', '~> 2'
