@@ -43,3 +43,13 @@ jobs:
         echo "::add-matcher::.github/actionlint-matcher.json"
         bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
         ./actionlint
+
+  renovate-config-validator:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/renovatebot/renovate
+      options: --user root
+    steps:
+    - uses: actions/checkout@v4
+    - name: Check Renovate config
+      run: renovate-config-validator --strict
