@@ -1,6 +1,6 @@
 {
   extends: [
-    "config:base",
+    "config:recommended",
     ":dependencyDashboard",
     ":prHourlyLimitNone",
     ":prConcurrentLimitNone",
@@ -30,8 +30,9 @@
       commitMessagePrefix: "ci: ",
     },
   ],
-  regexManagers: [
+  customManagers: [
     {
+      customType: "regex",
       fileMatch: ["\.rb$", "^Rakefile$"],
       matchStrings: [
         "renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\s.*_version = '(?<currentValue>.*)'\\s"
