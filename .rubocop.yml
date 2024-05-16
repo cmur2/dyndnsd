@@ -102,3 +102,6 @@ RSpec/ExampleLength:
 
 RSpec/MultipleExpectations:
   Max: 20
+
+RSpecRails:
+  Enabled: false
