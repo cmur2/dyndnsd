@@ -15,11 +15,6 @@
   commitMessageTopic: "{{depName}}",
   commitMessageExtra: "to {{#if isSingleVersion}}v{{{newVersion}}}{{else}}{{{newValue}}}{{/if}}",
   packageRules: [
-    // Ruby dependencies are managed by depfu
-    {
-      matchManagers: ["bundler"],
-      enabled: false,
-    },
     // Commit message formats
     {
       matchDatasources: ["docker"],
