@@ -50,7 +50,7 @@ namespace :docker do
       chmod a+w e2e/db.json
     SCRIPT
     sh "docker run -d --name=dyndnsd-ci -v $(pwd)/e2e:/etc/dyndnsd -p 8080:8080 -p 5353:5353 #{ci_image}"
-    sh 'sleep 1'
+    sh 'sleep 5'
     puts '----------------------------------------'
     # `dig` needs `sudo apt-get install -y -q dnsutils`
     sh <<~SCRIPT
