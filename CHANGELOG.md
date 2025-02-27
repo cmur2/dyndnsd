@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.11.0
+
+IMPROVEMENTS:
+
+- add Ruby 3.4 support
+
 ## 3.10.0
 
 IMPROVEMENTS:
