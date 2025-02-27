@@ -138,7 +138,7 @@ module Dyndnsd
     # @param params [Hash{String => String}]
     # @return [Array<String>]
     def extract_v4_and_v6_address(params)
-      return [] if !(params['myip'])
+      return [] if !params['myip']
       begin
         IPAddr.new(params['myip'], Socket::AF_INET)
         IPAddr.new(params['myip6'], Socket::AF_INET6)
@@ -207,7 +207,7 @@ module Dyndnsd
       params = Rack::Utils.parse_query(env['QUERY_STRING'])
 
       # require hostname parameter
-      return [422, {'X-DynDNS-Response' => 'hostname_missing'}, []] if !(params['hostname'])
+      return [422, {'X-DynDNS-Response' => 'hostname_missing'}, []] if !params['hostname']
 
       hostnames = params['hostname'].split(',')
 
