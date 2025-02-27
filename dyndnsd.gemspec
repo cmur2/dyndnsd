@@ -29,6 +29,8 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'async', '~> 1.31.0'
   s.add_dependency 'async-dns', '~> 1.3.0'
+  s.add_dependency 'base64', '~> 0.2.0' # needed for async
+  s.add_dependency 'logger', '~> 1.6.0'
   s.add_dependency 'metriks'
   s.add_dependency 'opentelemetry-exporter-jaeger', '~> 0.22.0'
   s.add_dependency 'opentelemetry-instrumentation-rack', '~> 0.22.0'
