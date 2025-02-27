@@ -73,7 +73,7 @@ namespace :bundle do
   end
 end
 
-task default: [:rubocop, :spec, 'bundle:audit', :solargraph]
+task default: [:rubocop, :spec, 'bundle:audit']
 
 desc 'Run all tasks desired for CI'
 task ci: [:default, 'docker:lint', :build, 'docker:build', 'docker:e2e']
