@@ -20,6 +20,13 @@
       matchManagers: ["bundler"],
       enabled: false,
     },
+    // Only quarter update since noisy/stable tools
+    {
+      matchPackageNames: [
+        "aquasecurity/trivy",
+      ],
+      schedule: ["* 0-8 1 */3 *"],
+    },
     // Commit message formats
     {
       matchDatasources: ["docker"],
