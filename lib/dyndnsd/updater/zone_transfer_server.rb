@@ -89,7 +89,7 @@ module Dyndnsd
       # @return [Array{Array{Object}}]
       def self.parse_endpoints(endpoint_list)
         endpoint_list.map { |addr_string| addr_string.split('@') }
-                     .map { |addr_parts| [addr_parts[0], addr_parts[1].to_i || 53] }
+                     .map { |addr_parts| [addr_parts[0], addr_parts[1]&.to_i || 53] }
                      .map { |addr| [:tcp, :udp].map { |type| [type] + addr } }
                      .flatten(1)
       end
