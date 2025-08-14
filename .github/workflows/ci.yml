@@ -23,7 +23,7 @@ jobs:
         - '3.3'
         - '3.4'
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Set up Ruby ${{ matrix.ruby-version }}
       uses: ruby/setup-ruby@v1
       with:
@@ -37,7 +37,7 @@ jobs:
   actionlint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Check workflow files
       run: |
         echo "::add-matcher::.github/actionlint-matcher.json"
@@ -50,6 +50,6 @@ jobs:
       image: ghcr.io/renovatebot/renovate
       options: --user root
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Check Renovate config
       run: renovate-config-validator --strict
