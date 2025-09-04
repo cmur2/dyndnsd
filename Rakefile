@@ -13,7 +13,7 @@ task :solargraph do
 end
 
 # renovate: datasource=github-tags depName=hadolint/hadolint
-hadolint_version = 'v2.12.0'
+hadolint_version = 'v2.13.1'
 
 # renovate: datasource=github-tags depName=aquasecurity/trivy
 trivy_version = 'v0.61.0'
