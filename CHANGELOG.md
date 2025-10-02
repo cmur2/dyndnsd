@@ -1,10 +1,11 @@
 # Changelog
 
-## 3.11.0
+## 3.11.0 (October 2nd, 2025)
 
 IMPROVEMENTS:
 
 - add Ruby 3.4 support
+- update base of Docker image to Alpine 3.22.1 (from 3.19.0 before)
 
 ## 3.10.0 (January 18th, 2024)
 
