@@ -1,6 +1,6 @@
 {
   extends: [
-    "config:base",
+    "config:recommended",
     ":dependencyDashboard",
     ":prHourlyLimitNone",
     ":prConcurrentLimitNone",
@@ -20,6 +20,13 @@
       matchManagers: ["bundler"],
       enabled: false,
     },
+    // Only quarter update since noisy/stable tools
+    {
+      matchPackageNames: [
+        "aquasecurity/trivy",
+      ],
+      schedule: ["* 0-8 1 */3 *"],
+    },
     // Commit message formats
     {
       matchDatasources: ["docker"],
@@ -30,9 +37,10 @@
       commitMessagePrefix: "ci: ",
     },
   ],
-  regexManagers: [
+  customManagers: [
     {
-      fileMatch: ["\.rb$", "^Rakefile$"],
+      customType: "regex",
+      managerFilePatterns: ["/.rb$/", "/^Rakefile$/"],
       matchStrings: [
         "renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\s.*_version = '(?<currentValue>.*)'\\s"
       ]

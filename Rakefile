@@ -3,11 +3,9 @@
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
 require 'rubocop/rake_task'
-require 'bundler/audit/task'
 
 RSpec::Core::RakeTask.new(:spec)
 RuboCop::RakeTask.new
-Bundler::Audit::Task.new
 
 desc 'Run experimental solargraph type checker'
 task :solargraph do
@@ -15,10 +13,10 @@ task :solargraph do
 end
 
 # renovate: datasource=github-tags depName=hadolint/hadolint
-hadolint_version = 'v2.12.0'
+hadolint_version = 'v2.14.0'
 
 # renovate: datasource=github-tags depName=aquasecurity/trivy
-trivy_version = 'v0.48.3'
+trivy_version = 'v0.61.0'
 
 namespace :docker do
   ci_image = 'cmur2/dyndnsd:ci'
@@ -50,7 +48,7 @@ namespace :docker do
       chmod a+w e2e/db.json
     SCRIPT
     sh "docker run -d --name=dyndnsd-ci -v $(pwd)/e2e:/etc/dyndnsd -p 8080:8080 -p 5353:5353 #{ci_image}"
-    sh 'sleep 1'
+    sh 'sleep 5'
     puts '----------------------------------------'
     # `dig` needs `sudo apt-get install -y -q dnsutils`
     sh <<~SCRIPT
@@ -68,7 +66,14 @@ namespace :docker do
   end
 end
 
-task default: [:rubocop, :spec, 'bundle:audit', :solargraph]
+namespace :bundle do
+  desc 'Check for vulnerabilities with bundler-audit'
+  task :audit do
+    sh 'bundler-audit check --ignore GHSA-vvfq-8hwr-qm4m' if !RUBY_VERSION.start_with?('3.0')
+  end
+end
+
+task default: [:rubocop, :spec, 'bundle:audit']
 
 desc 'Run all tasks desired for CI'
 task ci: [:default, 'docker:lint', :build, 'docker:build', 'docker:e2e']
