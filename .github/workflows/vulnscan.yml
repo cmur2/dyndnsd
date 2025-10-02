@@ -1,10 +1,9 @@
-# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 ---
 name: vulnscan
 
 on:
   schedule:
-  - cron: '7 4 * * 4'  # weekly on thursday morning
+  - cron: '7 4 1 * *'  # monthly on first day's morning
   workflow_dispatch:
 
 jobs:
