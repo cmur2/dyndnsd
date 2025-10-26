@@ -47,11 +47,12 @@ module Dyndnsd
           )
 
           default_options = {ttl: @zone_rr_ttl}
+          @server.soa_rr = [soa_rr, default_options]
 
           # array containing all resource records for an AXFR request in the right order
           rrs = []
           # AXFR responses need to start with zone's SOA RR
-          rrs << [soa_rr, default_options]
+          rrs << @server.soa_rr
 
           # return RRs for all of the zone's nameservers
           @zone_nameservers.each do |ns|
@@ -71,7 +72,7 @@ module Dyndnsd
           end
 
           # AXFR responses need to end with zone's SOA RR again
-          rrs << [soa_rr, default_options]
+          rrs << @server.soa_rr
 
           # point Async::DNS server thread's variable to this new RR array
           @server.axfr_rrs = rrs
@@ -131,6 +132,7 @@ module Dyndnsd
 
     class ZoneTransferServerHelper < Async::DNS::Server
       attr_accessor :axfr_rrs
+      attr_accessor :soa_rr
 
       def initialize(endpoints, domain)
         super(endpoints, logger: Dyndnsd.logger)
@@ -142,15 +144,30 @@ module Dyndnsd
       # Since solargraph cannot parse this: param transaction [Async::DNS::Transaction]
       # @return [void]
       def process(name, resource_class, transaction)
-        if name != @domain || resource_class != Resolv::DNS::Resource::Generic::Type252_Class1
+
+        # Check if AXFR resource class exists before checking for inequality.
+        # Otherwise, non-AXFR requests cause a SERVFAIL (instead of NXDOMAIN)
+        # until the first AXFR request is made.
+        if (name != @domain ||
+            resource_class != Resolv::DNS::Resource::IN::SOA &&
+            (!Resolv::DNS::Resource::Generic.const_defined?("Type252_Class1") ||
+              resource_class != Resolv::DNS::Resource::Generic.const_get("Type252_Class1")))
           transaction.fail!(:NXDomain)
           return
         end
 
-        # https://tools.ietf.org/html/rfc5936
         transaction.append_question!
-        @axfr_rrs.each do |rr|
-          transaction.add([rr[0]], rr[1])
+
+        if resource_class == Resolv::DNS::Resource::IN::SOA
+          # Some DNS servers (e.g., CoreDNS) use the SOA record to check for
+          # serial changes and will not perform a zone transfer if that record
+          # cannot be retrieved (or the serial number did not change).
+          transaction.add([@soa_rr[0]], @soa_rr[1])
+        else
+          # https://tools.ietf.org/html/rfc5936
+          @axfr_rrs.each do |rr|
+            transaction.add([rr[0]], rr[1])
+          end
         end
       end
     end
