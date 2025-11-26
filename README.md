@@ -307,6 +307,37 @@ users:
 ```
 
 
+### Matching with a regular expression
+
+Instead of relying on `hosts`, you can use `regex` to employ a regular expression, which is very useful for avoiding having to repeatedly edit the configuration file to register a new host name.
+
+```yaml
+host: "0.0.0.0"
+port: 5354
+username: "dyndnsd"
+group: "dyndnsd"
+db: "/dyndnsd/db.json"
+debug: false
+domain: "dyn.dc-air.home.arpa"
+updater:
+  name: "command_with_bind_zone"
+  params:
+    zone_file: "/nsd/zones/static/dyn.dc-air.home.arpa.zone"
+    command: "doas service nsd reload"
+    ttl: "5m"
+    dns: "ns.dc-air.home.arpa."
+    email_addr: "admin.example.org"
+users:
+  myuser:
+    password: "superhypermegas3kurepassword1234"
+    regex: '^[a-z][0-9]\.dyn\.dc\-air\.home\.arpa$'
+```
+
+However, when using `regex`, `hosts` is simply ignored if defined, so you must choose one or the other. Recommendation: use `regex` for scripts or programs and `hosts` for regular users.
+
+**Note**: Please note that when dyndnsd evaluates the regular expression, the `Regexp::EXTENDED` and `Regexp::IGNORECASE` options are used.
+
+
 ## License
 
 dyndnsd.rb is licensed under the Apache License, Version 2.0. See LICENSE for more information.
