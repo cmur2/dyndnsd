@@ -218,9 +218,22 @@ module Dyndnsd
       # we can trust this information since user was authorized by middleware
       user = env['REMOTE_USER']
 
-      # check for hostnames that the user does not own
-      forbidden_hostnames = hostnames - @users[user].fetch('hosts', [])
-      return [422, {'X-DynDNS-Response' => 'host_forbidden'}, []] if forbidden_hostnames.any?
+      if @users[user].key?('regex')
+        pattern = @users[user].fetch('regex')
+        begin
+          regex = Regexp.new(pattern, Regexp::IGNORECASE | Regexp::EXTENDED)
+        rescue RegexpError => e
+          Dyndnsd.logger.warn "Invalid regex pattern '#{pattern}': #{e.message}"
+          return [422, {'X-DynDNS-Response' => 'host_forbidden'}, []]
+        end
+        # check for hostnames that match the regex
+        matches = hostnames.any? { |str| regex.match?(str) }
+        return [422, {'X-DynDNS-Response' => 'host_forbidden'}, []] if !matches
+      else
+        # check for hostnames that the user does not own
+        forbidden_hostnames = hostnames - @users[user].fetch('hosts', [])
+        return [422, {'X-DynDNS-Response' => 'host_forbidden'}, []] if forbidden_hostnames.any?
+      end
 
       if params['offline'] == 'YES'
         myips = []
