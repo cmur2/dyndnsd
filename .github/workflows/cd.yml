@@ -11,7 +11,7 @@ jobs:
   release-dockerimage:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
 
     - name: Extract dyndnsd version from tag name
       run: |
