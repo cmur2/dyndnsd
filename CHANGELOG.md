@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.12.0
+
+IMPROVEMENTS:
+
+- regex instead of hosts list can be used for hostname ownership
+
 ## 3.11.0 (October 2nd, 2025)
 
 IMPROVEMENTS:
