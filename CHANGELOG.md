@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.12.0
+## 3.12.0 (December 4th, 2025)
 
 IMPROVEMENTS:
 
