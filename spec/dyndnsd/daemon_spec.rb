@@ -18,6 +18,10 @@ describe Dyndnsd::Daemon do
         },
         'test2' => {
           'password' => 'ihavenohosts'
+        },
+        'test3' => {
+          'password' => 'superhypermegas3kurepassword1234',
+          'regex' => '^[a-z0-9]+-test3\.example\.org$'
         }
       }
     }
@@ -74,6 +78,22 @@ describe Dyndnsd::Daemon do
     expect(last_response.body).to eq("good 2001:db8::1\ngood 2001:db8::1")
   end
 
+  it 'supports regex matches for hostnames' do
+    authorize 'test3', 'superhypermegas3kurepassword1234'
+
+    get '/nic/update?hostname=abc123-test3.example.org&myip=1.2.3.4'
+    expect(last_response).to be_ok
+    expect(last_response.body).to eq('good 1.2.3.4')
+
+    get '/nic/update?hostname=foo-test3.example.org,bar-test3.example.org&myip=2001:db8::1'
+    expect(last_response).to be_ok
+    expect(last_response.body).to eq("good 2001:db8::1\ngood 2001:db8::1")
+
+    get '/nic/update?hostname=abc123.example.org'
+    expect(last_response).to be_ok
+    expect(last_response.body).to eq('nohost')
+  end
+
   it 'rejects request if one hostname is invalid' do
     authorize 'test', 'secret'
 
@@ -118,6 +138,10 @@ describe Dyndnsd::Daemon do
     expect(last_response.body).to eq('nohost')
 
     get '/nic/update?hostname=foo.example.org,notmyhost.example.org'
+    expect(last_response).to be_ok
+    expect(last_response.body).to eq('nohost')
+
+    get '/nic/update?hostname=abc123-test3.example.org'
     expect(last_response).to be_ok
     expect(last_response.body).to eq('nohost')
   end
