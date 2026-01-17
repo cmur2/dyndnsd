@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.13.0
+
+IMPROVEMENTS:
+
+- add Ruby 4.0 support
+
 ## 3.12.0 (December 4th, 2025)
 
 IMPROVEMENTS:
