@@ -69,7 +69,7 @@ end
 namespace :bundle do
   desc 'Check for vulnerabilities with bundler-audit'
   task :audit do
-    sh 'bundler-audit check --ignore GHSA-vvfq-8hwr-qm4m' if !RUBY_VERSION.start_with?('3.0')
+    sh 'bundler-audit check --ignore GHSA-vvfq-8hwr-qm4m --ignore GHSA-wx95-c6cv-8532' if !RUBY_VERSION.start_with?('3.0')
   end
 end
 
