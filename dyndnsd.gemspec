@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'logger', '>= 1.6', '< 1.8'
   s.add_dependency 'metriks'
   s.add_dependency 'opentelemetry-exporter-jaeger', '~> 0.22.0'
-  s.add_dependency 'opentelemetry-instrumentation-rack', '~> 0.22.0'
+  s.add_dependency 'opentelemetry-instrumentation-rack', '>= 0.22', '< 0.28'
   s.add_dependency 'opentelemetry-sdk', '~> 1.2.0'
   s.add_dependency 'rack', '~> 3.0'
   s.add_dependency 'rackup', '~> 2'
