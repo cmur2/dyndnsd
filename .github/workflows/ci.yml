@@ -13,7 +13,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
@@ -35,7 +35,7 @@ jobs:
         bundle exec rake ci
 
   actionlint:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
     - uses: actions/checkout@v7
     - name: Check workflow files
@@ -45,7 +45,7 @@ jobs:
         ./actionlint
 
   renovate-config-validator:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     container:
       image: ghcr.io/renovatebot/renovate
       options: --user root
