@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.13.0
+## 3.13.0 (November 13th, 2026)
 
 IMPROVEMENTS:
 
