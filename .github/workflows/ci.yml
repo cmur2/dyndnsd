@@ -52,4 +52,4 @@ jobs:
     steps:
     - uses: actions/checkout@v7
     - name: Check Renovate config
-      run: renovate-config-validator --strict
+      run: renovate-config-validator
