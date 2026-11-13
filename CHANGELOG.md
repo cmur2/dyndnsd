@@ -5,6 +5,12 @@
 IMPROVEMENTS:
 
 - add Ruby 4.0 support
+- compatibility with newer patch versions of Ruby
+
+OTHER:
+
+- update base of Docker image to Alpine 3.24 (from 3.22 before)
+- include vendored metriks that does not require hitime with native extensions
 
 ## 3.12.0 (December 4th, 2025)
 
