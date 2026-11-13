@@ -1,4 +1,4 @@
-FROM alpine:3.22.8
+FROM alpine:3.24.4
 
 EXPOSE 5353 8080
 
