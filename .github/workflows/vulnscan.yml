@@ -8,7 +8,7 @@ on:
 
 jobs:
   scan-released-dockerimages:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       TRIVY_IGNORE_UNFIXED: 'true'
       TRIVY_REMOVED_PKGS: 'true'
