@@ -58,34 +58,6 @@ module Dyndnsd
               :count, :one_minute_rate, :five_minute_rate,
               :fifteen_minute_rate, :mean_rate
             ]
-          when Metriks::Counter
-            write_metric f, name, metric, [
-              :count
-            ]
-          when Metriks::UtilizationTimer
-            write_metric f, name, metric, [
-              :count, :one_minute_rate, :five_minute_rate,
-              :fifteen_minute_rate, :mean_rate,
-              :min, :max, :mean, :stddev,
-              :one_minute_utilization, :five_minute_utilization,
-              :fifteen_minute_utilization, :mean_utilization
-            ], [
-              :median, :get_95th_percentile
-            ]
-          when Metriks::Timer
-            write_metric f, name, metric, [
-              :count, :one_minute_rate, :five_minute_rate,
-              :fifteen_minute_rate, :mean_rate,
-              :min, :max, :mean, :stddev
-            ], [
-              :median, :get_95th_percentile
-            ]
-          when Metriks::Histogram
-            write_metric f, name, metric, [
-              :count, :min, :max, :mean, :stddev
-            ], [
-              :median, :get_95th_percentile
-            ]
           end
         end
       end
