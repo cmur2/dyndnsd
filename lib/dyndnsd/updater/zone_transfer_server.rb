@@ -142,7 +142,10 @@ module Dyndnsd
       # Since solargraph cannot parse this: param transaction [Async::DNS::Transaction]
       # @return [void]
       def process(name, resource_class, transaction)
-        if name != @domain || resource_class != Resolv::DNS::Resource::Generic::Type252_Class1
+        axfr = resource_class.const_defined?(:TypeValue) &&
+               resource_class.const_get(:TypeValue) == 252 &&      # AXFR
+               resource_class.const_get(:ClassValue) == 1          # IN
+        if name != @domain || !axfr
           transaction.fail!(:NXDomain)
           return
         end
