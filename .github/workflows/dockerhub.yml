@@ -9,7 +9,7 @@ on:
 
 jobs:
   pull-released-dockerimages:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
     - name: Avoid stale tags by pulling
       run: |
