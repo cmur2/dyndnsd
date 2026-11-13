@@ -2,9 +2,15 @@ plugins:
 - rubocop-rake
 - rubocop-rspec
 
+inherit_mode:
+  merge: [Exclude]
+
 AllCops:
   TargetRubyVersion: '3.0'
   NewCops: enable
+  Exclude:
+  - 'lib/metriks/**/*'
+  - 'lib/metriks.rb'
 
 Gemspec/DevelopmentDependencies:
   EnforcedStyle: gemspec
